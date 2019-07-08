@@ -199,41 +199,26 @@ ConfigDB getCnn = new ConfigDB();
         if(btnSimpan2.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_barang,1)) as id_barang from dt_barang";
+                String id = "select max(right(id_barang,3)) as id_barang from dt_barang";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
                     if(res.first() == false){
-                        mid = "1";
+                        mid = "BRG-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "BR" + no;
-                        }
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
                         if(noID < 10){
-                            mid =  no;
+                            mid =  "BRG--" + "00" + no;
                         } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
+                            mid = "BRG-" + "0" + no;
                         } else{
-                            mid= ""+ no;
+                            mid= "BRG-" + no;
                         }
                         txtKdBarang.setText(mid);
                         }

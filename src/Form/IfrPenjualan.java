@@ -116,7 +116,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
                 vid_customer = res.getString("id_customer");
                 veartag = res.getString("eartag");
                 vsex = res.getString("sex");
-                vbb = res.getString("bb/kg");
+                vbb = res.getString("bb");
                 vharga = res.getString("harga");
                 vketerangan = res.getString("keterangan");
                 Object[]data = {vno_transaksi, vid_customer, veartag, vsex, vbb, vharga, vketerangan};
@@ -136,13 +136,20 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
           vsex = cmbSex.getSelectedItem().toString();
           vharga = txtHarga.getText();
           vketerangan = txtKeterangan.getText();
+          java.util.Date dt = new java.util.Date();
+
+          java.text.SimpleDateFormat sdf = 
+          new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+          String currentTime = sdf.format(dt);
+
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into penjualan values "
-                    + " ('"+vno_transaksi+"', '"+vid_customer+"', '"+veartag+"', '"+vsex+"', '"+vbb+"', '"+vharga+"', '"+vketerangan+"') ";
+                    + " ('"+vno_transaksi+"', '"+vid_customer+"', '"+veartag+"', '"+vsex+"', '"+vbb+"', '"+vharga+"', '"+vketerangan+"', '"+currentTime+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
-               sqlinsert = "update penjualan set id_customer ='"+vid_customer+"', eartag ='"+veartag+"', sex ='"+vsex+"', bb/kg ='"+vbb+"', harga ='"+vharga+"', keterangan = '"+vketerangan+"' where no_transaksi='"+vno_transaksi+"' ";
+               sqlinsert = "update penjualan set id_customer ='"+vid_customer+"', eartag ='"+veartag+"', sex ='"+vsex+"', bb ='"+vbb+"', harga ='"+vharga+"', keterangan = '"+vketerangan+"' where no_transaksi='"+vno_transaksi+"' ";
                               
                JOptionPane.showMessageDialog(this, "Data Berhasil diUbah");
            }
@@ -171,6 +178,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
             state.executeUpdate(sqldelete);
            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
            clearForm();disableForm();showData();Id();
+             btnHapus.setEnabled(false);
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error method aksiHapus : " + ex);
         }
@@ -178,59 +186,6 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
     }
         
     }   
-    
-     private void Id(){
-        //kode jenis
-        if(btnSimpan.getText().equals("Simpan")){
-            try{
-                _Cnn = getCnn.getConnection();
-                String id = "select max(right(no_transaksi,1)) as no_transaksi from penjualan";
-                Statement stat = _Cnn.createStatement();
-                ResultSet res = stat.executeQuery(id);
-                while(res.next()){
-                    if(res.first() == false){
-                        mid = "1";
-                    } else{
-                        res.last();
-                        int noID = res.getInt(1) + 1;
-                        String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "TRANS-PNJ" + no;
-                        }
-                        if(noID < 10){
-                            mid =  no;
-                        } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
-                        } else{
-                            mid= ""+ no;
-                        }
-                        txtNoTransaksi.setText(mid);
-                        }
-                   
-                }
-            } catch(SQLException ex){
-                System.out.println("Error Method Id : " + ex);
-            }
-        }
-        //kode jenis
-    }
-     
      private void getData() {
              try{
                 _Cnn = null;
@@ -245,7 +200,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
                     cmbIdCustomer.setSelectedItem(res.getString("id_customer"));
                     txtEartag.setText(res.getString("eartag"));
                    cmbSex.setSelectedItem(res.getString("sex"));
-                    txtBB.setText(res.getString("bb/kg"));
+                    txtBB.setText(res.getString("bb"));
                     txtHarga.setText(res.getString("harga"));
                     txtKeterangan.setText(res.getString("keterangan"));
                 }   
@@ -253,6 +208,45 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Eror Method GetDataUser : " + ex);
             }
     } 
+     private void Id(){
+        //kode jenis
+        if(btnSimpan.getText().equals("Simpan")){
+               
+            try{
+                _Cnn = getCnn.getConnection();
+                String id = "select max(right(no_transaksi,3)) as no_transaksi from penjualan";
+                Statement stat = _Cnn.createStatement();
+                ResultSet res = stat.executeQuery(id);
+                while(res.next()){
+                    if(res.first() == false){
+                        mid = "TRANS-PNJ-" + "001";
+                    } else{
+                        res.last();
+                        int noID = res.getInt(1) + 1;
+                        String no = String.valueOf(noID);
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
+                        if(noID < 10){
+                            mid =  "TRANS-PNJ-" + "00" + no;
+                        } else if(noID < 100){
+                            mid = "TRANS-PNJ-" + "0" + no;
+                        } else{
+                            mid= "TRANS-PNJ-" + no;
+                        }
+                        txtNoTransaksi.setText(mid);
+                        }
+                   
+                }
+            } catch(SQLException ex){
+                System.out.println("Error Method Id : " + ex);
+            }
+        }
+        //kode jenis
+    }
+     
+    
     String[] KeySum;
     private void listSum(){
         try{
@@ -549,9 +543,10 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
       
-        Id();
+        
         enableForm();
         clearForm();
+        Id();
         txtNoTransaksi.requestFocus(true);
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnTambahActionPerformed

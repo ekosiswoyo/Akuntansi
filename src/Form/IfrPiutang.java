@@ -126,9 +126,15 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
           vjml_piutang = txtJumlah.getText();
           vpotongan = txtPotongan.getText();
           vketerangan = txtKeterangan.getText();
+         java.util.Date dt = new java.util.Date();
+
+        java.text.SimpleDateFormat sdf = 
+        new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String currentTime = sdf.format(dt);
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into piutang values "
-                        + " ('"+vid_piutang+"','"+vid_karyawan+"', '"+vjml_piutang+"', '"+vpotongan+"','"+vketerangan+"') ";
+                        + " ('"+vid_piutang+"','"+vid_karyawan+"', '"+vjml_piutang+"', '"+vpotongan+"','"+vketerangan+"','"+currentTime+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
@@ -174,41 +180,26 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         if(btnSimpan.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_piutang,1)) as id_piutang from piutang";
+                String id = "select max(right(id_piutang,3)) as id_piutang from piutang";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
-                while(res.next()){
+               while(res.next()){
                     if(res.first() == false){
-                        mid = "1";
+                        mid = "PIU-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "PIU-" + no;
-                        }
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
                         if(noID < 10){
-                            mid =  no;
+                            mid =  "PIU-" + "00" + no;
                         } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
+                            mid = "PIU-" + "0" + no;
                         } else{
-                            mid= ""+ no;
+                            mid= "PIU-" + no;
                         }
                         txtPiutang.setText(mid);
                         }
@@ -522,9 +513,10 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
       
-        Id();
+        
         enableForm();
         clearForm();
+        Id();
         txtPiutang.requestFocus(true);
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnTambahActionPerformed

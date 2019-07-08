@@ -178,41 +178,26 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
         if(btnSimpan.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(no_transaksi,11)) as no_transaksi from jurnal_umum";
+                String id = "select max(right(no_transaksi,3)) as no_transaksi from jurnal_umum";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
                     if(res.first() == false){
-                        mid = "1";
+                        mid = "JUR-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "JUR-" + no;
-                        }
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
                         if(noID < 10){
-                            mid =  no;
+                            mid =  "JUR-" + "00" + no;
                         } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
+                            mid = "JUR-" + "0" + no;
                         } else{
-                            mid= ""+ no;
+                            mid= "JUR-" + no;
                         }
                         txtNoTransaksi.setText(mid);
                         }
@@ -527,9 +512,10 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
       
-        Id();
+        
         enableForm();
         clearForm();
+        Id();
         txtNoTransaksi.requestFocus(true);
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnTambahActionPerformed

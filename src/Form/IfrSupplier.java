@@ -192,44 +192,30 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
    
  private void Id(){
         //kode jenis
-        if(btnSimpan.getText().equals("Simpan")){
+       if(btnSimpan.getText().equals("Simpan")){
+               
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_supplier,1)) as id_supplier from dt_supplier";
+                String id = "select max(right(id_supplier,3)) as id_supplier from dt_supplier";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
                     if(res.first() == false){
-                        mid = "1";
+                        mid = "SUP-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "SUP-" + no;
-                        }
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "SUP-" + no;
+//                        }
                         if(noID < 10){
-                            mid =  no;
+                            mid =  "SUP-" + "00" + no;
                         } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
+                            mid = "SUP-" + "0" + no;
                         } else{
-                            mid= ""+ no;
+                            mid= "SUP-" + no;
                         }
                         txtIdSupplier.setText(mid);
                         }

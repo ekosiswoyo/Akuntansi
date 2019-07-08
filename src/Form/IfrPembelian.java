@@ -132,9 +132,16 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
           int vqty = Integer.parseInt(txtQty.getText());
           int vharga = Integer.parseInt(txtHarga.getText());
           vjumlah = String.valueOf(vqty*vharga);
+          java.util.Date dt = new java.util.Date();
+
+          java.text.SimpleDateFormat sdf = 
+          new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+          String currentTime = sdf.format(dt);
+
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into pembelian values "
-                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"') ";
+                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"', '"+currentTime+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
@@ -180,41 +187,26 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         if(btnSimpan.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(no_transaksi,1)) as no_transaksi from pembelian";
+                String id = "select max(right(no_transaksi,3)) as no_transaksi from pembelian";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
                     if(res.first() == false){
-                        mid = "1";
+                        mid = "TRANS-PMB-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "TRANS-PMB-" + no;
-                        }
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
                         if(noID < 10){
-                            mid =  no;
+                            mid =  "TRANS-PMB-" + "00" + no;
                         } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
+                            mid = "TRANS-PMB-" + "0" + no;
                         } else{
-                            mid= ""+ no;
+                            mid= "TRANS-PMB-" + no;
                         }
                         txtNoTransaksi.setText(mid);
                         }
@@ -571,9 +563,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
       
-        Id();
+      
         enableForm();
         clearForm();
+          Id();
         txtNoTransaksi.requestFocus(true);
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnTambahActionPerformed

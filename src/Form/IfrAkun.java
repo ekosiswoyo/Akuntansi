@@ -13,13 +13,13 @@ ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vkd_perkiraan, vgolongan, vtipe, vnama;
+    String vkd_perkiraan, vgolongan, vtipe, vnama, mid;
     
     DefaultTableModel tblBarang;
     
     public IfrAkun() {
         initComponents();
-        
+        Id();
         clearForm();
         disableForm();
         enableForm();
@@ -101,7 +101,7 @@ ConfigDB getCnn = new ConfigDB();
                 Object[]data = {vkd_perkiraan, vgolongan, vtipe, vnama };
                 tblBarang.addRow(data); 
                 btnTambah.setText("Tambah");
-            }
+            }Id();
             lblRecord.setText("Record : "+tblDataAkun.getRowCount());
         }catch (SQLException ex){
                 JOptionPane.showMessageDialog(this, "Error Method showdataSiswa : " + ex);
@@ -136,7 +136,7 @@ ConfigDB getCnn = new ConfigDB();
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
-            clearForm(); enableForm(); showDataAkun();
+            clearForm(); enableForm(); showDataAkun();Id();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error Method aksiSimpan() : "+ex);
         } 
@@ -155,14 +155,50 @@ ConfigDB getCnn = new ConfigDB();
             java.sql.Statement state = _Cnn.createStatement();
             state.executeUpdate(sqldelete);
            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
-           clearForm();disableForm();showDataAkun();
+           clearForm();disableForm();showDataAkun();Id();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error method aksiHapus : " + ex);
         }
         
     }   
     }
-    
+     private void Id(){
+        //kode jenis
+        if(btnSimpan2.getText().equals("Simpan")){
+            try{
+                _Cnn = getCnn.getConnection();
+                String id = "select max(right(kd_perkiraan,3)) as kd_perkiraan from perkiraan_akun";
+                Statement stat = _Cnn.createStatement();
+                ResultSet res = stat.executeQuery(id);
+               while(res.next()){
+                    if(res.first() == false){
+                        mid = "AKUN-" + "001";
+                    } else{
+                        res.last();
+                        int noID = res.getInt(1) + 1;
+                        String no = String.valueOf(noID);
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
+                        if(noID < 10){
+                            mid =  "AKUN-" + "00" + no;
+                        } else if(noID < 100){
+                            mid = "AKUN-" + "0" + no;
+                        } else{
+                            mid= "AKUN-" + no;
+                        }
+                        txtKdPerkiraan.setText(mid);
+                        }
+                   
+                }
+            } catch(SQLException ex){
+                System.out.println("Error Method Id : " + ex);
+            }
+        }
+        //kode jenis
+    }
+     
     private void getData() {
              try{
                 _Cnn = null;
@@ -315,13 +351,12 @@ ConfigDB getCnn = new ConfigDB();
                                     .addComponent(txtKdPerkiraan, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
                                     .addComponent(cmbGolongan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(cmbTipe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())
+                            .addComponent(cmbTipe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
-                        .addComponent(txtNmPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(txtNmPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,7 +405,7 @@ ConfigDB getCnn = new ConfigDB();
             .addGroup(InputSiswaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(10, 10, 10)
                 .addComponent(btnSimpan2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -512,6 +547,7 @@ ConfigDB getCnn = new ConfigDB();
         InputSiswa.setSize(500, 450);
         InputSiswa.setLocationRelativeTo(this);
         enableForm();
+        Id();
         txtKdPerkiraan.requestFocus(true);
         btnSimpan2.setText("Simpan");
         }else{
@@ -520,6 +556,7 @@ ConfigDB getCnn = new ConfigDB();
         InputSiswa.setSize(500, 450);
         InputSiswa.setLocationRelativeTo(this);
         enableForm();
+        
         txtKdPerkiraan.requestFocus(true);
         }
     }//GEN-LAST:event_btnTambahActionPerformed

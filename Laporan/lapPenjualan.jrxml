@@ -24,7 +24,7 @@
 	<field name="sex" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="bb/kg" class="java.lang.Integer">
+	<field name="bb" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="harga" class="java.lang.Integer">
@@ -224,9 +224,11 @@
 		<band height="20" splitType="Stretch">
 			<staticText>
 				<reportElement x="524" y="0" width="24" height="20" uuid="bf29a40e-4940-42a7-a89d-ef0100e828a2"/>
-				<box leftPadding="0">
-					<topPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
@@ -236,7 +238,6 @@
 			<textField>
 				<reportElement x="0" y="0" width="29" height="20" uuid="20525c1c-d772-4cbb-9858-f52adfca5779"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -250,7 +251,6 @@
 			<textField>
 				<reportElement x="29" y="0" width="102" height="20" uuid="4f80d0c2-b559-4d2e-b2d0-ff94a8e2a583"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -264,7 +264,6 @@
 			<textField>
 				<reportElement x="131" y="0" width="131" height="20" uuid="1e101f69-10eb-4d32-b250-62ec051ef2d0"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -278,7 +277,6 @@
 			<textField>
 				<reportElement x="262" y="0" width="131" height="20" uuid="1855ee0b-fed0-40a8-bb99-060ae18c7e72"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -292,7 +290,6 @@
 			<textField>
 				<reportElement x="548" y="0" width="107" height="20" uuid="62587ee1-2756-4009-8d7a-3eada39fc7b0"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -306,7 +303,6 @@
 			<textField>
 				<reportElement x="655" y="0" width="131" height="20" uuid="5d96dc7a-2a55-4446-9136-137c1e934d5d"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -318,18 +314,17 @@
 				<textFieldExpression><![CDATA[$F{keterangan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="393" y="0" width="131" height="20" uuid="24ed18e3-cd4b-47d2-992d-75f23dc00446"/>
+				<reportElement x="393" y="0" width="131" height="20" uuid="c062e033-a86c-4ce8-95eb-677fb277b16f"/>
 				<box>
-					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bb/kg}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bb}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

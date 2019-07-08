@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 05 Jul 2019 pada 12.12
+-- Waktu pembuatan: 08 Jul 2019 pada 06.58
 -- Versi server: 10.1.37-MariaDB
 -- Versi PHP: 7.3.1
 
@@ -49,7 +49,7 @@ INSERT INTO `angsuran` (`id_angsuran`, `id_piutang`, `angsuran_ke`, `jumlah`) VA
 --
 
 CREATE TABLE `dt_barang` (
-  `id_barang` varchar(11) NOT NULL,
+  `id_barang` varchar(20) NOT NULL,
   `nm_barang` varchar(30) DEFAULT NULL,
   `spesifikasi` text,
   `harga_beli` int(11) DEFAULT NULL,
@@ -71,7 +71,7 @@ INSERT INTO `dt_barang` (`id_barang`, `nm_barang`, `spesifikasi`, `harga_beli`, 
 --
 
 CREATE TABLE `dt_customer` (
-  `id_customer` varchar(11) DEFAULT NULL,
+  `id_customer` varchar(20) DEFAULT NULL,
   `nm_customer` varchar(30) DEFAULT NULL,
   `alamat` text,
   `no_telepon` varchar(12) DEFAULT NULL
@@ -82,9 +82,9 @@ CREATE TABLE `dt_customer` (
 --
 
 INSERT INTO `dt_customer` (`id_customer`, `nm_customer`, `alamat`, `no_telepon`) VALUES
-('1', 'eko', 'smg', '123'),
-('CS-2', 'asd', 'da', '123'),
-('CS-3', 'as', 'da', '4');
+('CS-002', 'asd', 'da', '123'),
+('CS-003', 'as', 'da', '4'),
+('CS-004', 'iut', 'wwww', '123');
 
 -- --------------------------------------------------------
 
@@ -93,7 +93,7 @@ INSERT INTO `dt_customer` (`id_customer`, `nm_customer`, `alamat`, `no_telepon`)
 --
 
 CREATE TABLE `dt_karyawan` (
-  `id_karyawan` varchar(11) NOT NULL,
+  `id_karyawan` varchar(20) NOT NULL,
   `nama` varchar(30) DEFAULT NULL,
   `alamat` text,
   `no_telepon` varchar(12) DEFAULT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE `dt_karyawan` (
 --
 
 INSERT INTO `dt_karyawan` (`id_karyawan`, `nama`, `alamat`, `no_telepon`, `jabatan`, `status`, `keterangan`, `tgl_masuk`, `masa_kerja`) VALUES
-('1', 'eko', 'ssmcv', '643', '1', '1', 'rett', '2019-06-24', '2019-06-25');
+('KRY-001', 'eko', 'ssmcv', '643', '1', '1', 'rett', '2019-06-24', '2019-06-25');
 
 -- --------------------------------------------------------
 
@@ -118,7 +118,7 @@ INSERT INTO `dt_karyawan` (`id_karyawan`, `nama`, `alamat`, `no_telepon`, `jabat
 --
 
 CREATE TABLE `dt_supplier` (
-  `id_supplier` varchar(11) NOT NULL,
+  `id_supplier` varchar(20) NOT NULL,
   `nm_supplier` varchar(30) DEFAULT NULL,
   `alamat` text,
   `no_telepon` varchar(13) DEFAULT NULL,
@@ -130,8 +130,8 @@ CREATE TABLE `dt_supplier` (
 --
 
 INSERT INTO `dt_supplier` (`id_supplier`, `nm_supplier`, `alamat`, `no_telepon`, `no_rekening`) VALUES
-('1', 'eko', 'smg', '089', '12345'),
-('SUP-2', 'ds', 'dfs', '12', '54');
+('SUP-002', 'ds', 'dfs', '12', '54'),
+('SUP-003', 'qwe', 'qweqe', '123', '432');
 
 -- --------------------------------------------------------
 
@@ -140,7 +140,7 @@ INSERT INTO `dt_supplier` (`id_supplier`, `nm_supplier`, `alamat`, `no_telepon`,
 --
 
 CREATE TABLE `jurnal_umum` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `id_akun` varchar(11) DEFAULT NULL,
   `debet` int(11) DEFAULT NULL,
   `kredit` int(11) DEFAULT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE `jurnal_umum` (
 --
 
 INSERT INTO `jurnal_umum` (`no_transaksi`, `id_akun`, `debet`, `kredit`, `tgl_transaksi`) VALUES
-('21', '3', 10000, 20000, '2019-06-26');
+('JUR-022', '3', 120000, 10000, '2019-07-09');
 
 -- --------------------------------------------------------
 
@@ -161,7 +161,7 @@ INSERT INTO `jurnal_umum` (`no_transaksi`, `id_akun`, `debet`, `kredit`, `tgl_tr
 --
 
 CREATE TABLE `kas_keluar` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `tgl_nota` date DEFAULT NULL,
   `id_akun` varchar(11) DEFAULT NULL,
   `keterangan` text,
@@ -173,7 +173,7 @@ CREATE TABLE `kas_keluar` (
 --
 
 INSERT INTO `kas_keluar` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
-('2', '2019-06-27', '3', 'as', 20000);
+('TRANS-KK-003', '2019-07-09', '3', 'das', 10000);
 
 -- --------------------------------------------------------
 
@@ -182,7 +182,7 @@ INSERT INTO `kas_keluar` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `
 --
 
 CREATE TABLE `kas_masuk` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `tgl_nota` date DEFAULT NULL,
   `id_akun` varchar(11) DEFAULT NULL,
   `keterangan` text,
@@ -194,8 +194,8 @@ CREATE TABLE `kas_masuk` (
 --
 
 INSERT INTO `kas_masuk` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
-('12', '2019-06-25', '3', 'sad', 23000),
-('13', '2019-06-25', '3', 'asd', 2000);
+('13', '2019-06-25', '3', 'asd', 2000),
+('TRANS-KM-014', '2019-07-08', '3', 'jdsa', 90000);
 
 -- --------------------------------------------------------
 
@@ -204,7 +204,7 @@ INSERT INTO `kas_masuk` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `n
 --
 
 CREATE TABLE `pembelian` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `id_supplier` varchar(11) DEFAULT NULL,
   `id_barang` varchar(11) DEFAULT NULL,
   `qty` int(6) DEFAULT NULL,
@@ -218,13 +218,7 @@ CREATE TABLE `pembelian` (
 --
 
 INSERT INTO `pembelian` (`no_transaksi`, `id_supplier`, `id_barang`, `qty`, `harga`, `jumlah`, `tgl`) VALUES
-('1', '1', '1', 2, 20000, 40000, '2019-06-20 14:39:45'),
-('2', '1', '1', 3, 20000, 60000, '2019-06-25 14:39:45'),
-('4', '1', '1', 4, 3, 7, '2019-06-25 14:39:45'),
-('5', '1', '1', 4, 2, 6, '2019-06-25 14:39:45'),
-('6', '1', '1', 2, 1, 3, '2019-06-25 14:39:45'),
-('7', '1', '1', 1, 2, 2, '2019-06-25 14:39:45'),
-('8', '1', '1', 2, 2000, 4000, '2019-06-25 14:39:45');
+('TRANS-PMB-001', 'SUP-002', '1', 3, 20000, 60000, '2019-07-08 10:48:12');
 
 -- --------------------------------------------------------
 
@@ -233,7 +227,7 @@ INSERT INTO `pembelian` (`no_transaksi`, `id_supplier`, `id_barang`, `qty`, `har
 --
 
 CREATE TABLE `penggajian` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `id_karyawan` varchar(11) DEFAULT NULL,
   `gaji` int(11) DEFAULT NULL,
   `lemburan` int(11) DEFAULT NULL,
@@ -249,7 +243,7 @@ CREATE TABLE `penggajian` (
 --
 
 INSERT INTO `penggajian` (`no_transaksi`, `id_karyawan`, `gaji`, `lemburan`, `transport`, `insentif`, `potongan`, `total`, `tgl`) VALUES
-('2', '1', 200000, 50000, 10000, 40000, 50000, 250000, '2019-06-25 14:51:57');
+('TRANS-PGJ-003', '1', 120000, 23000, 12000, 89000, 12000, 232000, '2019-07-08 10:49:29');
 
 -- --------------------------------------------------------
 
@@ -258,11 +252,11 @@ INSERT INTO `penggajian` (`no_transaksi`, `id_karyawan`, `gaji`, `lemburan`, `tr
 --
 
 CREATE TABLE `penjualan` (
-  `no_transaksi` varchar(11) NOT NULL,
+  `no_transaksi` varchar(20) NOT NULL,
   `id_customer` varchar(11) DEFAULT NULL,
   `eartag` varchar(6) DEFAULT NULL,
   `sex` enum('JANTAN','BETINA') DEFAULT NULL,
-  `bb/kg` int(11) DEFAULT NULL,
+  `bb` int(11) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
   `keterangan` text,
   `tgl` datetime DEFAULT CURRENT_TIMESTAMP
@@ -272,9 +266,9 @@ CREATE TABLE `penjualan` (
 -- Dumping data untuk tabel `penjualan`
 --
 
-INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb/kg`, `harga`, `keterangan`, `tgl`) VALUES
-('1', '1', '23', '', 123, 20000, '90000', '2019-06-26 11:47:40'),
-('2', '1', '24', '', 22, 30000, 'ok', '2019-06-24 12:55:16');
+INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb`, `harga`, `keterangan`, `tgl`) VALUES
+('TRANS-PNJ-002', '1', '24', '', 22, 30000, 'ok', '2019-06-24 12:55:16'),
+('TRANS-PNJ-003', 'CS-4', 'sad', 'BETINA', 12, 1200, 'gfh', '2019-07-08 10:31:57');
 
 -- --------------------------------------------------------
 
@@ -283,7 +277,7 @@ INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb/kg`
 --
 
 CREATE TABLE `perkiraan_akun` (
-  `kd_perkiraan` int(11) NOT NULL,
+  `kd_perkiraan` varchar(20) NOT NULL,
   `golongan` varchar(50) DEFAULT NULL,
   `tipe_perkiraan` varchar(50) DEFAULT NULL,
   `nm_perkiraan` varchar(50) DEFAULT NULL
@@ -294,7 +288,8 @@ CREATE TABLE `perkiraan_akun` (
 --
 
 INSERT INTO `perkiraan_akun` (`kd_perkiraan`, `golongan`, `tipe_perkiraan`, `nm_perkiraan`) VALUES
-(3, 'Hutang', 'Detail', 'a');
+('3', 'Hutang', 'Detail', 'a'),
+('AKUN-004', 'Harta', 'Header', 'dada');
 
 -- --------------------------------------------------------
 
@@ -303,7 +298,7 @@ INSERT INTO `perkiraan_akun` (`kd_perkiraan`, `golongan`, `tipe_perkiraan`, `nm_
 --
 
 CREATE TABLE `piutang` (
-  `id_piutang` varchar(11) NOT NULL,
+  `id_piutang` varchar(20) NOT NULL,
   `id_karyawan` varchar(11) DEFAULT NULL,
   `jml_piutang` int(11) DEFAULT NULL,
   `potongan` int(11) DEFAULT NULL,
@@ -317,7 +312,7 @@ CREATE TABLE `piutang` (
 
 INSERT INTO `piutang` (`id_piutang`, `id_karyawan`, `jml_piutang`, `potongan`, `keterangan`, `tgl`) VALUES
 ('1', '1', 10000, 20000, 'a', '2019-06-25 15:00:44'),
-('2', '1', 1, 2, '3', '2019-06-25 15:00:44');
+('PIU003', '1', 3333, 1, 'sa', '2019-07-08 10:58:47');
 
 -- --------------------------------------------------------
 
@@ -430,16 +425,10 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT untuk tabel `perkiraan_akun`
---
-ALTER TABLE `perkiraan_akun`
-  MODIFY `kd_perkiraan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

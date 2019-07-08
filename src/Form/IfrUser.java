@@ -99,11 +99,10 @@ public class IfrUser extends javax.swing.JInternalFrame {
         }
     }
     private void Id(){
-        //kode jenis
-        if(btnSimpan.getText().equals("Simpan")){
+         if(btnSimpan.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_user,1)) as id_user from user";
+                String id = "select max(right(id_supplier,1)) as id_supplier from dt_supplier";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
@@ -237,6 +236,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
                     txtNmUser.setText(res.getString("nm_user"));
                     txtUsername.setText(res.getString("username"));
                     txtPassword.setText(res.getString("password"));
+                    txtDeskripsi.setText(res.getString("deskripsi"));
                     cmbLevel.setSelectedItem(res.getString("level"));
                 }   
             }catch(SQLException ex){
@@ -472,7 +472,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -504,10 +504,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        if(txtIdUser.getText().equals("")){
-            JOptionPane.showMessageDialog(this, "ID User harus diisi ! ",
-            "Informasi", JOptionPane.INFORMATION_MESSAGE);  
-        }else if(txtUsername.getText().equals("")){
+        if(txtUsername.getText().equals("")){
             JOptionPane.showMessageDialog(this, "Username harus diisi ! ",
             "Informasi", JOptionPane.INFORMATION_MESSAGE);   
         }else if(txtPassword.getText().equals("")){

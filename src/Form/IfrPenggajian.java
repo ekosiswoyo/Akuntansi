@@ -16,8 +16,9 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid;
-    
+    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid, vtgl;
+    SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblgaji;
     
     public IfrPenggajian() {
@@ -41,6 +42,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         txtInsentif.setText("");
         txtTotal.setText("");
         cmbKaryawan.setSelectedIndex(0);
+        dtTrans.setDate(new java.util.Date());
     }
     
     private void disableForm(){
@@ -52,6 +54,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         txtInsentif.setEnabled(false);
         txtTotal.setEnabled(false);
         cmbKaryawan.setSelectedIndex(0);
+        dtTrans.setEnabled(false);
         btnSimpan.setEnabled(false);
         btnHapus.setEnabled(false);
     }
@@ -65,15 +68,17 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         txtTotal.setEnabled(true);
         txtInsentif.setEnabled(true);
         btnSimpan.setEnabled(true);
+        dtTrans.setEnabled(true);
         cmbKaryawan.setSelectedIndex(0);
         btnHapus.setEnabled(true);
     }
      
    
     private void setTabel(){
-        String[]kolom1 = {"No Transaksi","Id Karyawan", "Gaji" , "Lemburan", "Transport", "Insentif", "Potongan", "Total"};
+        String[]kolom1 = {"No Transaksi","Id Karyawan", "Gaji" , "Lemburan", "Transport", "Insentif", "Potongan", "Total", "Tanggal"};
         tblgaji = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -102,6 +107,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         tbDataGaji.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataGaji.getColumnModel().getColumn(6).setPreferredWidth(75);
         tbDataGaji.getColumnModel().getColumn(7).setPreferredWidth(75);
+        tbDataGaji.getColumnModel().getColumn(7).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -128,8 +134,9 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                 vinsentif = res.getString("insentif");
                 vpotongan = res.getString("potongan");
                 vtotal = res.getString("total");
+                vtgl = res.getString("tgl");
                 
-                Object[]data = {vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal};
+                Object[]data = {vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, vtgl};
                 tblgaji.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -149,19 +156,15 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
           int vinsentif = Integer.parseInt(txtInsentif.getText());
           int vpotongan = Integer.parseInt(txtPotongan.getText());
           vtotal = String.valueOf(vgaji+vlemburan+vtransport+vinsentif-vpotongan);
-          java.util.Date dt = new java.util.Date();
-
-          java.text.SimpleDateFormat sdf = 
-          new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-          String currentTime = sdf.format(dt);
+          vtgl = tglinput.format(dtTrans.getDate());
+          
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into penggajian values "
-                        + " ('"+vno_transaksi+"','"+vid_karyawan+"', '"+vgaji+"', '"+vlemburan+"','"+vtransport+"',  '"+vinsentif+"', '"+vpotongan+"', '"+vtotal+"', '"+currentTime+"') ";
+                        + " ('"+vno_transaksi+"','"+vid_karyawan+"', '"+vgaji+"', '"+vlemburan+"','"+vtransport+"',  '"+vinsentif+"', '"+vpotongan+"', '"+vtotal+"', '"+vtgl+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
-               sqlinsert = "update penggajian set id_karyawan ='"+vid_karyawan+"', gaji ='"+vgaji+"', lemburan = '"+vlemburan+"', transport = '"+vtransport+"', insentif = '"+vinsentif+"', potongan= '"+vpotongan+"', total = '"+vtotal+"' where no_transaksi ='"+vno_transaksi+"' ";
+               sqlinsert = "update penggajian set id_karyawan ='"+vid_karyawan+"', gaji ='"+vgaji+"', lemburan = '"+vlemburan+"', transport = '"+vtransport+"', insentif = '"+vinsentif+"', potongan= '"+vpotongan+"', total = '"+vtotal+"', tgl = '"+vtgl+"' where no_transaksi ='"+vno_transaksi+"' ";
                               
                JOptionPane.showMessageDialog(this, "Data Berhasil diUbah");
            }
@@ -252,6 +255,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                     txtTransport.setText(res.getString("transport"));
                     txtInsentif.setText(res.getString("insentif"));
                     txtPotongan.setText(res.getString("potongan"));
+                    dtTrans.setDate(res.getDate("tgl"));
 
                 }   
             }catch(SQLException ex){
@@ -309,6 +313,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
+        dtTrans = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
@@ -389,6 +395,11 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             }
         });
 
+        dtTrans.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        dtTrans.setOpaque(false);
+
+        jLabel3.setText("Tanggal");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -409,7 +420,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                             .addComponent(jLabel6)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
-                            .addComponent(jLabel11))
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel3))
                         .addGap(38, 38, 38)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -421,13 +433,14 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                                     .addComponent(txtLembur))
                                 .addGap(10, 10, 10))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(cmbKaryawan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(cmbKaryawan, 0, 352, Short.MAX_VALUE)
                                 .addContainerGap())
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txtInsentif)
                                 .addContainerGap())
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(dtTrans, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(txtTotal, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtPotongan))
                                 .addContainerGap())))))
@@ -467,7 +480,11 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dtTrans, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
@@ -650,9 +667,11 @@ int vgaji = Integer.parseInt(txtGaji.getText());
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cmbKaryawan;
+    private com.toedter.calendar.JDateChooser dtTrans;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

@@ -5,6 +5,7 @@ import Tool.ConfigDB;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,8 +16,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, mid;
+    String vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, vtgl, mid;
     
+    SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblpembelian;
     
     public IfrPembelian() {
@@ -39,6 +42,8 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         txtJumlah.setText("");
         cmbIdSupplier.setSelectedIndex(0);
         cmbIdBarang.setSelectedIndex(0);
+        
+        dtTrans.setDate(new java.util.Date());
     }
     
     private void disableForm(){
@@ -48,6 +53,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         txtJumlah.setEnabled(false);
         cmbIdSupplier.setSelectedIndex(0);
         cmbIdBarang.setSelectedIndex(0);
+        dtTrans.setEnabled(false);
         btnSimpan.setEnabled(false);
         btnHapus.setEnabled(false);
     }
@@ -58,6 +64,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         txtHarga.setEnabled(true);
         txtJumlah.setEnabled(true);
         btnSimpan.setEnabled(true);
+        dtTrans.setEnabled(true);
         cmbIdSupplier.setSelectedIndex(0);
         cmbIdBarang.setSelectedIndex(0);
         btnHapus.setEnabled(true);
@@ -65,9 +72,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"Id Transaksi", "ID Supplier" , "Nama Barang", "Qty", "Harga", "Jumlah"};
+        String[]kolom1 = {"Id Transaksi", "ID Supplier" , "Nama Barang", "Qty", "Harga", "Jumlah", "Tanggal"};
         tblpembelian = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -91,6 +99,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         tbDataPembelian.getColumnModel().getColumn(2).setPreferredWidth(75);
         tbDataPembelian.getColumnModel().getColumn(3).setPreferredWidth(75);
         tbDataPembelian.getColumnModel().getColumn(4).setPreferredWidth(75);
+        tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
     }
     
@@ -116,7 +125,8 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
                 vharga = res.getString("harga");
                 vjumlah = res.getString("jumlah");
                 vbarang = res.getString("id_barang");
-                Object[]data = {vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah};
+                vtgl = res.getString("tgl");
+                Object[]data = {vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, vtgl};
                 tblpembelian.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -132,20 +142,14 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
           int vqty = Integer.parseInt(txtQty.getText());
           int vharga = Integer.parseInt(txtHarga.getText());
           vjumlah = String.valueOf(vqty*vharga);
-          java.util.Date dt = new java.util.Date();
-
-          java.text.SimpleDateFormat sdf = 
-          new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-          String currentTime = sdf.format(dt);
-
+          vtgl = tglinput.format(dtTrans.getDate());
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into pembelian values "
-                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"', '"+currentTime+"') ";
+                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"', '"+vtgl+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
-               sqlinsert = "update pembelian set id_supplier ='"+vid_supplier+"', id_barang ='"+vbarang+"', qty = '"+vqty+"', harga = '"+vharga+"', jumlah = '"+vjumlah+"' where no_transaksi='"+vno_transaksi+"' ";
+               sqlinsert = "update pembelian set id_supplier ='"+vid_supplier+"', id_barang ='"+vbarang+"', qty = '"+vqty+"', harga = '"+vharga+"', jumlah = '"+vjumlah+"', tgl = '"+vtgl+"' where no_transaksi='"+vno_transaksi+"' ";
                               
                JOptionPane.showMessageDialog(this, "Data Berhasil diUbah");
            }
@@ -235,6 +239,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
                     txtQty.setText(res.getString("qty"));
                     txtHarga.setText(res.getString("harga"));
                     txtJumlah.setText(res.getString("jumlah"));
+                    dtTrans.setDate(res.getDate("tgl"));
                 }   
             }catch(SQLException ex){
                 JOptionPane.showMessageDialog(this, "Eror Method GetDataUser : " + ex);
@@ -315,6 +320,8 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         cmbIdBarang = new javax.swing.JComboBox<>();
+        dtTrans = new com.toedter.calendar.JDateChooser();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
@@ -391,6 +398,11 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
 
         cmbIdBarang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        dtTrans.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        dtTrans.setOpaque(false);
+
+        jLabel5.setText("Tanggal");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -411,13 +423,15 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
                             .addComponent(jLabel4)
                             .addComponent(Qty)
                             .addComponent(jLabel7)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel5))
                         .addGap(94, 94, 94)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtJumlah)
                             .addComponent(txtQty, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(cmbIdBarang, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtHarga, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(txtHarga, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dtTrans, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -447,7 +461,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dtTrans, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
@@ -638,10 +655,12 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cmbIdBarang;
     private javax.swing.JComboBox<String> cmbIdSupplier;
+    private com.toedter.calendar.JDateChooser dtTrans;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;

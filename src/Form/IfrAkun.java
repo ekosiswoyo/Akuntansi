@@ -89,11 +89,11 @@ ConfigDB getCnn = new ConfigDB();
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabelAkun();
-            sqlselect =  "select * from perkiraan_akun order by kd_perkiraan";
+            sqlselect =  "select * from perkiraan_akun order by id_akun";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
-                vkd_perkiraan = res.getString("kd_perkiraan");
+                vkd_perkiraan = res.getString("id_akun");
                 vgolongan = res.getString("golongan");
                 vtipe = res.getString("tipe_perkiraan");
                 vnama = res.getString("nm_perkiraan");
@@ -124,7 +124,7 @@ ConfigDB getCnn = new ConfigDB();
                         "Informasi", JOptionPane.INFORMATION_MESSAGE);
            }else{
                sqlinsert = "update perkiraan_akun set golongan ='"+vgolongan+"', tipe_perkiraan='"+vtipe+"', "
-                       + " nm_perkiraan='"+vnama+"' where kd_perkiraan = '"+vkd_perkiraan+"'";
+                       + " nm_perkiraan='"+vnama+"' where id_akun = '"+vkd_perkiraan+"'";
                InputSiswa.dispose();
                
                 JOptionPane.showMessageDialog(null,"Data Berhasil DiUbah",
@@ -145,13 +145,13 @@ ConfigDB getCnn = new ConfigDB();
     
     private void aksiHapus(){
         int jawab = JOptionPane.showConfirmDialog(this, 
-                "Apakah anda yakin akan menghapus data ini ? ID BARANG : "+vkd_perkiraan,
+                "Apakah anda yakin akan menghapus data ini ? ID : "+vkd_perkiraan,
                 "Konfirmasi ",JOptionPane.YES_NO_OPTION);
         if(jawab== JOptionPane.YES_OPTION){
              try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
-            sqldelete = "delete from perkiraan_akun where kd_perkiraan= '"+vkd_perkiraan+"'"; 
+            sqldelete = "delete from perkiraan_akun where id_akun= '"+vkd_perkiraan+"'"; 
             java.sql.Statement state = _Cnn.createStatement();
             state.executeUpdate(sqldelete);
            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
@@ -167,7 +167,7 @@ ConfigDB getCnn = new ConfigDB();
         if(btnSimpan2.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(kd_perkiraan,3)) as kd_perkiraan from perkiraan_akun";
+                String id = "select max(right(id_akun,3)) as id_akun from perkiraan_akun";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                while(res.next()){
@@ -204,12 +204,12 @@ ConfigDB getCnn = new ConfigDB();
                 _Cnn = null;
                 _Cnn = getCnn.getConnection();
                 sqlselect = "select * from perkiraan_akun "
-                    + " where kd_perkiraan='"+vkd_perkiraan+"'"
-                    + " order by kd_perkiraan asc ";        
+                    + " where id_akun='"+vkd_perkiraan+"'"
+                    + " order by id_akun asc ";        
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
-                    txtKdPerkiraan.setText(res.getString("kd_perkiraan"));
+                    txtKdPerkiraan.setText(res.getString("id_akun"));
                     cmbGolongan.setSelectedItem(res.getString("golongan"));
                     cmbTipe.setSelectedItem(res.getString("tipe_perkiraan"));
                     txtNmPerkiraan.setText(res.getString("nm_perkiraan"));
@@ -229,12 +229,12 @@ ConfigDB getCnn = new ConfigDB();
                 _Cnn = getCnn.getConnection();
                 clearTabelAkun();
                 sqlselect ="select * from perkiraan_akun "
-                    + " where nm_perkiraan like '%"+txtCari.getText()+"%' order by kd_perkiraan asc ";     
+                    + " where nm_perkiraan like '%"+txtCari.getText()+"%' order by id_akun asc ";     
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 while(res.next()){
                     
-                    vkd_perkiraan = res.getString("kd_perkiraan");
+                    vkd_perkiraan = res.getString("id_akun");
                     vgolongan =res.getString("golongan");
                     vtipe = res.getString("tipe_perkiraan");
                     vnama = res.getString("nm_perkiraan");

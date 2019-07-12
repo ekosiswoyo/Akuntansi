@@ -16,7 +16,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vid_transaksi, vakun, vtanggal, vketerangan, vnominal, mid;
+    String vid_transaksi, vakun,vnamaakun, vtanggal, vketerangan, vnominal, mid;
     
     DefaultTableModel tblkas;
     
@@ -64,9 +64,10 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"ID Transaksi", "ID Akun" , "Tanggal Nota", "Keterangan", "Nominal"};
+        String[]kolom1 = {"ID Transaksi", "ID Akun" , "Nama Perkiraan", "Tanggal Nota", "Keterangan", "Nominal"};
         tblkas = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -89,6 +90,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
         tbDataKas.getColumnModel().getColumn(2).setPreferredWidth(75);
         tbDataKas.getColumnModel().getColumn(3).setPreferredWidth(75);
         tbDataKas.getColumnModel().getColumn(4).setPreferredWidth(75);
+        tbDataKas.getColumnModel().getColumn(4).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -103,17 +105,18 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from kas_masuk order by no_transaksi asc";
+            sqlselect =  "select * from kas_masuk a, perkiraan_akun b where a.id_akun=b.id_akun order by a.no_transaksi asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
                 vid_transaksi = res.getString("no_transaksi");
                 vakun = res.getString("id_akun");
+                vnamaakun = res.getString("nm_perkiraan");
                 vtanggal = res.getString("tgl_nota");
                 vketerangan = res.getString("keterangan");
                 vnominal = res.getString("nominal");
                 
-                Object[]data = {vid_transaksi, vakun, vtanggal,  vketerangan, vnominal};
+                Object[]data = {vid_transaksi, vakun,vnamaakun, vtanggal,  vketerangan, vnominal};
                 tblkas.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -220,6 +223,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
                 if(res.first()){
                     txtIdTransaksi.setText(res.getString("no_transaksi"));
                     cmbIdAkun.setSelectedItem(res.getString("id_akun"));
+                    
                     dtKas.setDate(res.getDate("tgl_nota"));
                     txtKeterangan.setText(res.getString("keterangan"));
                     txtNominal.setText(res.getString("nominal"));
@@ -234,7 +238,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
         try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
-            sqlselect = "SELECT * FROM perkiraan_akun order by kd_perkiraan asc";
+            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             cmbIdAkun.removeAllItems();

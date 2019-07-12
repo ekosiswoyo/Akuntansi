@@ -73,9 +73,10 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"No. Faktur", "ID. Customer" , "Sex", "BB Kg", "Harga", "Ketrangan", "Tanggal"};
+        String[]kolom1 = {"No. Faktur", "ID. Customer" , "Eartag" ,"Sex", "BB Kg", "Harga", "Ketrangan", "Tanggal"};
         tblpenjualan = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -100,6 +101,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
         tbDataPenjualan.getColumnModel().getColumn(2).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(3).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(4).setPreferredWidth(75);
+        tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
     }
@@ -150,6 +152,8 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into penjualan values "
                     + " ('"+vno_transaksi+"', '"+vid_customer+"', '"+veartag+"', '"+vsex+"', '"+vbb+"', '"+vharga+"', '"+vketerangan+"', '"+vtgl+"') ";
+            
+            
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{

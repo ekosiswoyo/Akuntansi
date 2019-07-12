@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 08 Jul 2019 pada 06.58
+-- Waktu pembuatan: 12 Jul 2019 pada 10.18
 -- Versi server: 10.1.37-MariaDB
 -- Versi PHP: 7.3.1
 
@@ -173,7 +173,8 @@ CREATE TABLE `kas_keluar` (
 --
 
 INSERT INTO `kas_keluar` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
-('TRANS-KK-003', '2019-07-09', '3', 'das', 10000);
+('TRANS-KK-003', '2019-07-09', '3', 'das', 10000),
+('TRANS-KK-004', '2019-07-12', '3', 'sa', 12000);
 
 -- --------------------------------------------------------
 
@@ -194,8 +195,9 @@ CREATE TABLE `kas_masuk` (
 --
 
 INSERT INTO `kas_masuk` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
-('13', '2019-06-25', '3', 'asd', 2000),
-('TRANS-KM-014', '2019-07-08', '3', 'jdsa', 90000);
+('TRANS-KM-013', '2019-06-25', '3', 'asd', 2000),
+('TRANS-KM-014', '2019-07-08', '3', 'jdsa', 90000),
+('TRANS-KM-015', '2019-07-12', 'AKUN-004', 'asd', 12000);
 
 -- --------------------------------------------------------
 
@@ -210,7 +212,7 @@ CREATE TABLE `pembelian` (
   `qty` int(6) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
   `jumlah` int(11) DEFAULT NULL,
-  `tgl` datetime DEFAULT CURRENT_TIMESTAMP
+  `tgl` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -218,7 +220,9 @@ CREATE TABLE `pembelian` (
 --
 
 INSERT INTO `pembelian` (`no_transaksi`, `id_supplier`, `id_barang`, `qty`, `harga`, `jumlah`, `tgl`) VALUES
-('TRANS-PMB-001', 'SUP-002', '1', 3, 20000, 60000, '2019-07-08 10:48:12');
+('TRANS-PMB-001', 'SUP-002', '1', 3, 20000, 60000, '2019-07-08'),
+('TRANS-PMB-002', 'SUP-002', '1', 2, 12000, 24000, '2019-07-12'),
+('TRANS-PMB-003', 'SUP-002', '1', 2, 20000, 40000, '2019-07-13');
 
 -- --------------------------------------------------------
 
@@ -235,7 +239,7 @@ CREATE TABLE `penggajian` (
   `insentif` int(11) DEFAULT NULL,
   `potongan` int(11) DEFAULT NULL,
   `total` int(11) DEFAULT NULL,
-  `tgl` datetime DEFAULT CURRENT_TIMESTAMP
+  `tgl` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -243,7 +247,8 @@ CREATE TABLE `penggajian` (
 --
 
 INSERT INTO `penggajian` (`no_transaksi`, `id_karyawan`, `gaji`, `lemburan`, `transport`, `insentif`, `potongan`, `total`, `tgl`) VALUES
-('TRANS-PGJ-003', '1', 120000, 23000, 12000, 89000, 12000, 232000, '2019-07-08 10:49:29');
+('TRANS-PGJ-003', '1', 120000, 23000, 12000, 89000, 12000, 232000, '2019-07-08'),
+('TRANS-PGJ-004', 'KRY-001', 2, 3, 4, 1, 1, 9, '2019-07-13');
 
 -- --------------------------------------------------------
 
@@ -259,7 +264,7 @@ CREATE TABLE `penjualan` (
   `bb` int(11) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
   `keterangan` text,
-  `tgl` datetime DEFAULT CURRENT_TIMESTAMP
+  `tgl` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -267,8 +272,9 @@ CREATE TABLE `penjualan` (
 --
 
 INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb`, `harga`, `keterangan`, `tgl`) VALUES
-('TRANS-PNJ-002', '1', '24', '', 22, 30000, 'ok', '2019-06-24 12:55:16'),
-('TRANS-PNJ-003', 'CS-4', 'sad', 'BETINA', 12, 1200, 'gfh', '2019-07-08 10:31:57');
+('TRANS-PNJ-002', '1', '24', '', 22, 30000, 'ok', '2019-06-24'),
+('TRANS-PNJ-003', 'CS-004', 'sad', 'BETINA', 12, 1200, 'gfh', '2019-07-08'),
+('TRANS-PNJ-004', 'CS-002', 'd', 'JANTAN', 12, 12000, 'dfs', '2019-07-12');
 
 -- --------------------------------------------------------
 
@@ -277,7 +283,7 @@ INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb`, `
 --
 
 CREATE TABLE `perkiraan_akun` (
-  `kd_perkiraan` varchar(20) NOT NULL,
+  `id_akun` varchar(20) NOT NULL,
   `golongan` varchar(50) DEFAULT NULL,
   `tipe_perkiraan` varchar(50) DEFAULT NULL,
   `nm_perkiraan` varchar(50) DEFAULT NULL
@@ -287,7 +293,7 @@ CREATE TABLE `perkiraan_akun` (
 -- Dumping data untuk tabel `perkiraan_akun`
 --
 
-INSERT INTO `perkiraan_akun` (`kd_perkiraan`, `golongan`, `tipe_perkiraan`, `nm_perkiraan`) VALUES
+INSERT INTO `perkiraan_akun` (`id_akun`, `golongan`, `tipe_perkiraan`, `nm_perkiraan`) VALUES
 ('3', 'Hutang', 'Detail', 'a'),
 ('AKUN-004', 'Harta', 'Header', 'dada');
 
@@ -303,7 +309,7 @@ CREATE TABLE `piutang` (
   `jml_piutang` int(11) DEFAULT NULL,
   `potongan` int(11) DEFAULT NULL,
   `keterangan` text,
-  `tgl` datetime DEFAULT CURRENT_TIMESTAMP
+  `tgl` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -311,8 +317,9 @@ CREATE TABLE `piutang` (
 --
 
 INSERT INTO `piutang` (`id_piutang`, `id_karyawan`, `jml_piutang`, `potongan`, `keterangan`, `tgl`) VALUES
-('1', '1', 10000, 20000, 'a', '2019-06-25 15:00:44'),
-('PIU003', '1', 3333, 1, 'sa', '2019-07-08 10:58:47');
+('1', '1', 10000, 20000, 'a', '2019-06-25'),
+('PIU-002', 'KRY-001', 12, 1, 'as', '2019-07-13'),
+('PIU003', '1', 3333, 1, 'sa', '2019-07-08');
 
 -- --------------------------------------------------------
 
@@ -406,7 +413,7 @@ ALTER TABLE `penjualan`
 -- Indeks untuk tabel `perkiraan_akun`
 --
 ALTER TABLE `perkiraan_akun`
-  ADD PRIMARY KEY (`kd_perkiraan`);
+  ADD PRIMARY KEY (`id_akun`);
 
 --
 -- Indeks untuk tabel `piutang`
@@ -428,7 +435,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

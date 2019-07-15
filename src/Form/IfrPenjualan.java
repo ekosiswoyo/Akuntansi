@@ -16,7 +16,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_customer, veartag, vsex, vbb, vharga, vketerangan, mid, vtgl;
+    String vno_transaksi, vid_customer, veartag, vsex, vbb, vharga, vketerangan, mid, vtgl, vcustomer;
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
@@ -73,9 +73,10 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"No. Faktur", "ID. Customer" , "Eartag" ,"Sex", "BB Kg", "Harga", "Ketrangan", "Tanggal"};
+        String[]kolom1 = {"No. Faktur", "ID. Customer","Nama Customer", "Eartag" ,"Sex", "BB Kg", "Harga", "Ketrangan", "Tanggal"};
         tblpenjualan = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -104,6 +105,7 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
         tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
+        tbDataPenjualan.getColumnModel().getColumn(5).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -118,19 +120,20 @@ public class IfrPenjualan extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from penjualan order by no_transaksi asc";
+            sqlselect =  "select * from penjualan a, dt_customer b where a.id_customer=b.id_customer order by a.no_transaksi asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
                 vno_transaksi = res.getString("no_transaksi");
                 vid_customer = res.getString("id_customer");
+                vcustomer = res.getString("nm_customer");
                 veartag = res.getString("eartag");
                 vsex = res.getString("sex");
                 vbb = res.getString("bb");
                 vharga = res.getString("harga");
                 vketerangan = res.getString("keterangan");
                 vtgl = res.getString("tgl");
-                Object[]data = {vno_transaksi, vid_customer, veartag, vsex, vbb, vharga, vketerangan, vtgl};
+                Object[]data = {vno_transaksi, vid_customer, vcustomer, veartag, vsex, vbb, vharga, vketerangan, vtgl};
                 tblpenjualan.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");

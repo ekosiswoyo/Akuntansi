@@ -15,8 +15,8 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, vtgl, mid;
+    String sqlselect, sqlinsert, sqldelete,sqlinsertt;
+    String vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, vtgl, mid, vsupplier, vnmbarang, mids,bit;
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
@@ -26,6 +26,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         initComponents();
         
         Id();
+        Ids();
         clearForm();
         disableForm();
         setTabel();
@@ -72,9 +73,11 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"Id Transaksi", "ID Supplier" , "Nama Barang", "Qty", "Harga", "Jumlah", "Tanggal"};
+        String[]kolom1 = {"Id Transaksi", "ID Supplier" , "Nama Supplier", "ID Barang" , "Nama Barang", "Qty", "Harga", "Jumlah", "Tanggal"};
         tblpembelian = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -101,6 +104,8 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         tbDataPembelian.getColumnModel().getColumn(4).setPreferredWidth(75);
         tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
+        tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
+        tbDataPembelian.getColumnModel().getColumn(5).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -115,20 +120,23 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from pembelian order by no_transaksi asc";
+            sqlselect =  "select * from pembelian a, dt_supplier b, dt_barang c , pembelian_header d where d.id_supplier=b.id_supplier and a.id_barang=c.id_barang and a.no_trans=d.no_trans order by d.no_trans asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
                 vno_transaksi = res.getString("no_transaksi");
                 vid_supplier = res.getString("id_supplier");
+                vsupplier = res.getString("nm_supplier");
+                vbarang = res.getString("id_barang");
+                vnmbarang = res.getString("nm_barang");
                 vqty = res.getString("qty");
                 vharga = res.getString("harga");
                 vjumlah = res.getString("jumlah");
                 vbarang = res.getString("id_barang");
                 vtgl = res.getString("tgl");
-                Object[]data = {vno_transaksi, vid_supplier, vbarang, vqty, vharga, vjumlah, vtgl};
+                Object[]data = {vno_transaksi, vid_supplier, vsupplier,vbarang,vnmbarang, vqty, vharga, vjumlah, vtgl};
                 tblpembelian.addRow(data);
-            }Id();
+            }Id();Ids();
                  btnTambah.setText("Tambah");
             lblRecord.setText("Record : "+tbDataPembelian.getRowCount());
         }catch (SQLException ex){
@@ -137,6 +145,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     }
     private void aksiSimpan(){
           vno_transaksi = txtNoTransaksi.getText();
+          bit = txtId.getText();
           vid_supplier = KeySum[cmbIdSupplier.getSelectedIndex()];
           vbarang = KeySumBar[cmbIdBarang.getSelectedIndex()];
           int vqty = Integer.parseInt(txtQty.getText());
@@ -144,9 +153,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
           vjumlah = String.valueOf(vqty*vharga);
           vtgl = tglinput.format(dtTrans.getDate());
            if(btnSimpan.getText().equals("Simpan")){
-            sqlinsert = "insert into pembelian values "
-                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"', '"+vtgl+"') ";
-            
+            sqlinsert = "insert into pembelian_header values "
+                    + " ('"+vno_transaksi+"', '"+vid_supplier+"', '"+vtgl+"') ";
+            sqlinsertt = "insert into pembelian values "
+                    + " ('"+bit+"','"+vno_transaksi+"', '"+vbarang+"', '"+vqty+"', '"+vharga+"', '"+vjumlah+"') ";
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
                sqlinsert = "update pembelian set id_supplier ='"+vid_supplier+"', id_barang ='"+vbarang+"', qty = '"+vqty+"', harga = '"+vharga+"', jumlah = '"+vjumlah+"', tgl = '"+vtgl+"' where no_transaksi='"+vno_transaksi+"' ";
@@ -158,8 +168,9 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
             _Cnn = getCnn.getConnection();
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
+            state.executeUpdate(sqlinsertt);
             
-            clearForm(); disableForm(); showData();Id();
+            clearForm(); disableForm(); showData();Id();Ids();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error Method aksiSimpan() : "+ex);
         } 
@@ -177,7 +188,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
             java.sql.Statement state = _Cnn.createStatement();
             state.executeUpdate(sqldelete);
            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
-           clearForm();disableForm();showData();Id();
+           clearForm();disableForm();showData();Id();Ids();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error method aksiHapus : " + ex);
         }
@@ -185,7 +196,36 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     }
         
     }   
-    
+      private void Ids(){
+        //kode jenis
+        if(btnSimpan.getText().equals("Simpan")){
+            try{
+                _Cnn = getCnn.getConnection();
+                String id = "select max(right(id_pembelian,1)) as id_pembelian from pembelian";
+                Statement stat = _Cnn.createStatement();
+                ResultSet res = stat.executeQuery(id);
+                while(res.next()){
+                    if(res.first() == false){
+                        mids = "1";
+                    } else{
+                        res.last();
+                        int noID = res.getInt(1) + 1;
+                        String no = String.valueOf(noID);
+//                        int noLong = no.length();
+//                        for(int a=0;a<2-noLong;a++){
+//                            no = "TRANS-PNJ-" + no;
+//                        }
+                        mids = no;
+                        txtId.setText(mids);
+                        }
+                   
+                }
+            } catch(SQLException ex){
+                System.out.println("Error Method Id : " + ex);
+            }
+        }
+        //kode jenis
+    }
      private void Id(){
         //kode jenis
         if(btnSimpan.getText().equals("Simpan")){
@@ -329,6 +369,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataPembelian = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Form Input"));
         setClosable(true);
@@ -521,10 +562,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
 
         tbDataPembelian.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No. Transaksi", "ID Supplier", "Id Barang", "Qty", "Harga", "Jumlah"
+                "No. Transaksi", "ID Supplier", "Nama Supplier", "ID Barang", "Nama Barang", "Qty", "Harga", "Jumlah"
             }
         ));
         tbDataPembelian.setRowHeight(25);
@@ -537,6 +578,13 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
 
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+
+        txtId.setText("jTextField1");
+        txtId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -555,7 +603,9 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(174, 174, 174)
+                                .addGap(49, 49, 49)
+                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(66, 66, 66)
                                 .addComponent(jLabel2)))
                         .addGap(5, 5, 5))))
         );
@@ -563,7 +613,9 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(9, 9, 9)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(5, 5, 5)
@@ -583,7 +635,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
       
         enableForm();
         clearForm();
-          Id();
+          Id();Ids();
         txtNoTransaksi.requestFocus(true);
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnTambahActionPerformed
@@ -647,6 +699,10 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtJumlahActionPerformed
 
+    private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Qty;
@@ -669,6 +725,7 @@ public class IfrPembelian extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataPembelian;
     private javax.swing.JTextField txtHarga;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtJumlah;
     private javax.swing.JTextField txtNoTransaksi;
     private javax.swing.JTextField txtQty;

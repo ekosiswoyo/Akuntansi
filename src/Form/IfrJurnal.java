@@ -16,7 +16,7 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_akun, vdebet, vkredit, vtgl, mid;
+    String vno_transaksi, vid_akun, vdebet, vkredit, vtgl, mid, vakun;
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
@@ -66,9 +66,10 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"No Transaksi","ID Akun", "Debet" , "Kredit", "Tanggal Transaksi"};
+        String[]kolom1 = {"No Transaksi","ID Akun","Nama Akun", "Debet" , "Kredit", "Tanggal Transaksi"};
         tblangsuran = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -91,6 +92,7 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
         tbDataJurnal.getColumnModel().getColumn(2).setPreferredWidth(75);
         tbDataJurnal.getColumnModel().getColumn(3).setPreferredWidth(75);
         tbDataJurnal.getColumnModel().getColumn(4).setPreferredWidth(75);
+        tbDataJurnal.getColumnModel().getColumn(4).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -105,7 +107,7 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from jurnal_umum order by no_transaksi asc";
+            sqlselect =  "select * from jurnal_umum a, perkiraan_akun b where a.id_akun=b.id_akun order by a.no_transaksi asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
@@ -114,8 +116,8 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
                 vdebet = res.getString("debet");
                 vkredit = res.getString("kredit");
                 vtgl = res.getString("tgl_transaksi");
-                
-                Object[]data = {vno_transaksi, vid_akun, vdebet, vkredit, vtgl};
+                vakun = res.getString("nm_perkiraan");
+                Object[]data = {vno_transaksi, vid_akun,vakun, vdebet, vkredit, vtgl};
                 tblangsuran.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -236,7 +238,7 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
         try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
-            sqlselect = "SELECT * FROM perkiraan_akun order by kd_perkiraan asc";
+            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             cmbAkun.removeAllItems();
@@ -457,10 +459,10 @@ public class IfrJurnal extends javax.swing.JInternalFrame {
 
         tbDataJurnal.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "No Transaksi", "ID Akun", "Debet", "Kredit", "Tanggal Transaksi"
+                "No Transaksi", "ID Akun", "Nama Akun", "Debet", "Kredit", "Tanggal Transaksi"
             }
         ));
         tbDataJurnal.setRowHeight(25);

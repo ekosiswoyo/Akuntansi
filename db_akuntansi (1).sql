@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Jul 2019 pada 10.18
+-- Waktu pembuatan: 15 Jul 2019 pada 12.17
 -- Versi server: 10.1.37-MariaDB
 -- Versi PHP: 7.3.1
 
@@ -206,23 +206,48 @@ INSERT INTO `kas_masuk` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `n
 --
 
 CREATE TABLE `pembelian` (
-  `no_transaksi` varchar(20) NOT NULL,
-  `id_supplier` varchar(11) DEFAULT NULL,
-  `id_barang` varchar(11) DEFAULT NULL,
+  `id_pembelian` int(11) NOT NULL,
+  `no_trans` varchar(20) DEFAULT NULL,
+  `id_barang` varchar(20) DEFAULT NULL,
   `qty` int(6) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `tgl` date DEFAULT NULL
+  `jumlah` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data untuk tabel `pembelian`
 --
 
-INSERT INTO `pembelian` (`no_transaksi`, `id_supplier`, `id_barang`, `qty`, `harga`, `jumlah`, `tgl`) VALUES
-('TRANS-PMB-001', 'SUP-002', '1', 3, 20000, 60000, '2019-07-08'),
-('TRANS-PMB-002', 'SUP-002', '1', 2, 12000, 24000, '2019-07-12'),
-('TRANS-PMB-003', 'SUP-002', '1', 2, 20000, 40000, '2019-07-13');
+INSERT INTO `pembelian` (`id_pembelian`, `no_trans`, `id_barang`, `qty`, `harga`, `jumlah`) VALUES
+(1, 'SUP-002', '1', 3, 20000, 60000),
+(2, 'SUP-002', '1', 2, 12000, 24000),
+(3, 'SUP-002', '1', 2, 20000, 40000),
+(4, 'a', 'v', 1, 2, 3),
+(5, '45', '1', 2, 33, 66),
+(6, '56', '1', 2, 12, 24),
+(7, '532', '1', 2, 23, 46),
+(8, '579', '1', 1, 2, 2),
+(9, '9888', '1', 4, 45, 180);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pembelian_header`
+--
+
+CREATE TABLE `pembelian_header` (
+  `no_trans` varchar(20) DEFAULT NULL,
+  `id_supplier` varchar(20) DEFAULT NULL,
+  `tgl` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `pembelian_header`
+--
+
+INSERT INTO `pembelian_header` (`no_trans`, `id_supplier`, `tgl`) VALUES
+('579', 'SUP-002', '2019-07-15'),
+('9888', 'SUP-002', '2019-07-15');
 
 -- --------------------------------------------------------
 
@@ -232,7 +257,7 @@ INSERT INTO `pembelian` (`no_transaksi`, `id_supplier`, `id_barang`, `qty`, `har
 
 CREATE TABLE `penggajian` (
   `no_transaksi` varchar(20) NOT NULL,
-  `id_karyawan` varchar(11) DEFAULT NULL,
+  `id_karyawan` varchar(20) DEFAULT NULL,
   `gaji` int(11) DEFAULT NULL,
   `lemburan` int(11) DEFAULT NULL,
   `transport` int(11) DEFAULT NULL,
@@ -395,7 +420,7 @@ ALTER TABLE `kas_masuk`
 -- Indeks untuk tabel `pembelian`
 --
 ALTER TABLE `pembelian`
-  ADD PRIMARY KEY (`no_transaksi`);
+  ADD PRIMARY KEY (`id_pembelian`);
 
 --
 -- Indeks untuk tabel `penggajian`
@@ -430,6 +455,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
 --
+
+--
+-- AUTO_INCREMENT untuk tabel `pembelian`
+--
+ALTER TABLE `pembelian`
+  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`

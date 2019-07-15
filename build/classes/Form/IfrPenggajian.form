@@ -446,9 +446,10 @@
         <Component class="javax.swing.JTable" name="tbDataGaji">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="8" rowCount="1">
+              <Table columnCount="9" rowCount="1">
                 <Column editable="true" title="No Transaksi" type="java.lang.Object"/>
                 <Column editable="true" title="ID Karyawan" type="java.lang.Object"/>
+                <Column editable="true" title="Nama Karyawan" type="java.lang.Object"/>
                 <Column editable="true" title="Gaji" type="java.lang.Object"/>
                 <Column editable="true" title="Lemburan" type="java.lang.Object"/>
                 <Column editable="true" title="Transport" type="java.lang.Object"/>
@@ -459,6 +460,11 @@
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>

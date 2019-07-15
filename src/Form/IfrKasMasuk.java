@@ -454,10 +454,10 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
 
         tbDataKas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID Transaksi", "ID Akun", "Tanggal", "Keterangan", "Nominal"
+                "ID Transaksi", "ID Akun", "Nama Perkiraan", "Tanggal", "Keterangan", "Nominal"
             }
         ));
         tbDataKas.setRowHeight(25);

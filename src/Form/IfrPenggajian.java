@@ -16,7 +16,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid, vtgl;
+    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid, vtgl, vkaryawan;
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblgaji;
@@ -75,9 +75,10 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"No Transaksi","Id Karyawan", "Gaji" , "Lemburan", "Transport", "Insentif", "Potongan", "Total", "Tanggal"};
+        String[]kolom1 = {"No Transaksi","Id Karyawan","Nama Karyawan", "Gaji" , "Lemburan", "Transport", "Insentif", "Potongan", "Total", "Tanggal"};
         tblgaji = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -108,6 +109,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         tbDataGaji.getColumnModel().getColumn(6).setPreferredWidth(75);
         tbDataGaji.getColumnModel().getColumn(7).setPreferredWidth(75);
         tbDataGaji.getColumnModel().getColumn(7).setPreferredWidth(75);
+        tbDataGaji.getColumnModel().getColumn(7).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -122,12 +124,13 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from penggajian order by no_transaksi asc";
+            sqlselect =  "select * from penggajian a, dt_karyawan b where a.id_karyawan=b.id_karyawan order by a.no_transaksi asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
                 vno_transaksi = res.getString("no_transaksi");
                 vid_karyawan = res.getString("id_karyawan");
+                vkaryawan = res.getString("nama");
                 vgaji = res.getString("gaji");
                 vlemburan = res.getString("lemburan");
                 vtransport = res.getString("transport");
@@ -136,7 +139,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                 vtotal = res.getString("total");
                 vtgl = res.getString("tgl");
                 
-                Object[]data = {vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, vtgl};
+                Object[]data = {vno_transaksi, vid_karyawan, vkaryawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, vtgl};
                 tblgaji.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -541,10 +544,10 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
 
         tbDataGaji.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No Transaksi", "ID Karyawan", "Gaji", "Lemburan", "Transport", "Insentif", "Potongan", "Total"
+                "No Transaksi", "ID Karyawan", "Nama Karyawan", "Gaji", "Lemburan", "Transport", "Insentif", "Potongan", "Total"
             }
         ));
         tbDataGaji.setRowHeight(25);

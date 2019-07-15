@@ -16,7 +16,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, mid, vtgl;
+    String vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, mid, vtgl, vkaryawan;
     
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
@@ -69,9 +69,10 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"ID Piutang","ID Karyawan", "Jumlah Piutang" , "Potongan", "Keterangan", "Tanggal"};
+        String[]kolom1 = {"ID Piutang","ID Karyawan","Nama Karyawan", "Jumlah Piutang" , "Potongan", "Keterangan", "Tanggal"};
         tblpiutang = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -96,6 +97,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         tbDataPiutang.getColumnModel().getColumn(3).setPreferredWidth(75);
         tbDataPiutang.getColumnModel().getColumn(4).setPreferredWidth(75);
         tbDataPiutang.getColumnModel().getColumn(4).setPreferredWidth(75);
+        tbDataPiutang.getColumnModel().getColumn(4).setPreferredWidth(75);
     }
     
     private void clearTabel(){
@@ -110,18 +112,19 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             clearTabel();
-            sqlselect =  "select * from piutang order by id_piutang asc";
+            sqlselect =  "select * from piutang a, dt_karyawan b where a.id_karyawan=b.id_karyawan order by a.id_piutang asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
             while(res.next()){
                 vid_piutang = res.getString("id_piutang");
                 vid_karyawan = res.getString("id_karyawan");
+                vkaryawan = res.getString("nama");
                 vjml_piutang = res.getString("jml_piutang");
                 vpotongan = res.getString("potongan");
                 vketerangan = res.getString("keterangan");
                 vtgl = res.getString("tgl");
                 
-                Object[]data = {vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, vtgl};
+                Object[]data = {vid_piutang, vid_karyawan, vkaryawan, vjml_piutang, vpotongan, vketerangan, vtgl};
                 tblpiutang.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
@@ -477,10 +480,10 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
 
         tbDataPiutang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID Piutang", "ID Karyawan", "Jumlah", "Potongan", "Keterangan"
+                "ID Piutang", "ID Karyawan", "Nama Karyawan", "Jumlah", "Potongan", "Keterangan"
             }
         ));
         tbDataPiutang.setRowHeight(25);

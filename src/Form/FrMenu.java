@@ -379,12 +379,12 @@ public class FrMenu extends javax.swing.JFrame {
         tgl.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         tgl.setText("Tanggal");
         panelDesktop.add(tgl);
-        tgl.setBounds(560, 550, 200, 22);
+        tgl.setBounds(610, 550, 200, 22);
 
         lbljam.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lbljam.setText("Jam");
         panelDesktop.add(lbljam);
-        lbljam.setBounds(560, 580, 200, 22);
+        lbljam.setBounds(610, 580, 200, 22);
 
         lblId.setText("ID. USER :");
         panelDesktop.add(lblId);

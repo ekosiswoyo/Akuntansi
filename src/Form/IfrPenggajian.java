@@ -15,8 +15,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete;
-    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid, vtgl, vkaryawan;
+    String sqlselect, sqlinsert, sqldelete, sqlkas, sqljurnal;
+    String vno_transaksi, vid_karyawan, vgaji, vlemburan, vtransport, vinsentif, vpotongan, vtotal, mid, vtgl, vkaryawan, vidakun, vketerangan;
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblgaji;
@@ -30,6 +30,7 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         setTabel();
         showData();
         listSum();
+        listAkun();
     }
     
     private void clearForm(){
@@ -42,6 +43,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         txtInsentif.setText("");
         txtTotal.setText("");
         cmbKaryawan.setSelectedIndex(0);
+        txtKeterangan.setText("");
+        cmbIdAkun.setSelectedIndex(0);
         dtTrans.setDate(new java.util.Date());
     }
     
@@ -54,6 +57,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         txtInsentif.setEnabled(false);
         txtTotal.setEnabled(false);
         cmbKaryawan.setSelectedIndex(0);
+        txtKeterangan.setEnabled(false);
+        cmbIdAkun.setSelectedIndex(0);
         dtTrans.setEnabled(false);
         btnSimpan.setEnabled(false);
         btnHapus.setEnabled(false);
@@ -70,6 +75,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         btnSimpan.setEnabled(true);
         dtTrans.setEnabled(true);
         cmbKaryawan.setSelectedIndex(0);
+        txtKeterangan.setEnabled(true);
+        cmbIdAkun.setSelectedIndex(0);
         btnHapus.setEnabled(true);
     }
      
@@ -150,7 +157,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
     }
     private void aksiSimpan(){
           
-          
+          vketerangan = txtKeterangan.getText();
+          vidakun = KeyAkun[cmbIdAkun.getSelectedIndex()];
           vno_transaksi = txtNoTransaksi.getText();
           vid_karyawan = KeySum[cmbKaryawan.getSelectedIndex()];
           int vgaji = Integer.parseInt(txtGaji.getText());
@@ -164,7 +172,10 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into penggajian values "
                         + " ('"+vno_transaksi+"','"+vid_karyawan+"', '"+vgaji+"', '"+vlemburan+"','"+vtransport+"',  '"+vinsentif+"', '"+vpotongan+"', '"+vtotal+"', '"+vtgl+"') ";
-            
+            sqlkas = "insert into kas_keluar values "
+                    + " ('"+vno_transaksi+"','"+vtgl+"', '"+vidakun+"', '"+vketerangan+"', '"+vtotal+"') ";
+            sqljurnal = "insert into jurnal_umum values "
+                    + " ('"+vno_transaksi+"','"+vidakun+"', '"+vtotal+"','0',  '"+vtgl+"') "; 
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
                sqlinsert = "update penggajian set id_karyawan ='"+vid_karyawan+"', gaji ='"+vgaji+"', lemburan = '"+vlemburan+"', transport = '"+vtransport+"', insentif = '"+vinsentif+"', potongan= '"+vpotongan+"', total = '"+vtotal+"', tgl = '"+vtgl+"' where no_transaksi ='"+vno_transaksi+"' ";
@@ -176,6 +187,8 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             _Cnn = getCnn.getConnection();
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
+            state.executeUpdate(sqlkas);
+            state.executeUpdate(sqljurnal);
             
             clearForm(); disableForm(); showData();Id();
         }catch(SQLException ex){
@@ -291,7 +304,33 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Error Method listSum " +ex);
         }
     }
- 
+ String[] KeyAkun;
+    private void listAkun(){
+        try{
+            _Cnn = null;
+            _Cnn = getCnn.getConnection();
+            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
+            Statement stat = _Cnn.createStatement();
+            ResultSet res = stat.executeQuery(sqlselect);
+            cmbIdAkun.removeAllItems();
+            cmbIdAkun.repaint();
+            cmbIdAkun.addItem("-- PILIH PERKIRAAN AKUN --");
+            int i = 1;
+            while(res.next()){
+                cmbIdAkun.addItem(res.getString("nm_perkiraan"));
+                i++;
+            }
+            res.first();
+            KeyAkun = new String[i+1];
+            for(Integer x =1;x < i;x++){
+                KeyAkun[x] = res.getString(1);
+                res.next();
+            }
+        } catch (SQLException ex){
+            JOptionPane.showMessageDialog(this, "Error Method listSum " +ex);
+        }
+    }
+
     
 
     @SuppressWarnings("unchecked")
@@ -300,24 +339,17 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
 
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        txtGaji = new javax.swing.JTextField();
         txtNoTransaksi = new javax.swing.JTextField();
         cmbKaryawan = new javax.swing.JComboBox<>();
-        txtPotongan = new javax.swing.JTextField();
-        txtLembur = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        txtTransport = new javax.swing.JTextField();
-        txtInsentif = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        txtTotal = new javax.swing.JTextField();
         dtTrans = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
+        cmbIdAkun = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtKeterangan = new javax.swing.JTextArea();
+        jLabel12 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
@@ -325,6 +357,19 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataGaji = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        txtPotongan = new javax.swing.JTextField();
+        txtGaji = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtLembur = new javax.swing.JTextField();
+        txtInsentif = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        txtTransport = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Form Input"));
         setClosable(true);
@@ -343,14 +388,6 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setOpaque(false);
 
-        txtGaji.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        txtGaji.setOpaque(false);
-        txtGaji.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtGajiKeyTyped(evt);
-            }
-        });
-
         txtNoTransaksi.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtNoTransaksi.setOpaque(false);
         txtNoTransaksi.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -361,47 +398,24 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
 
         cmbKaryawan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        txtPotongan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        txtPotongan.setOpaque(false);
-        txtPotongan.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtPotonganKeyTyped(evt);
-            }
-        });
-
-        txtLembur.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
         jLabel1.setText("No Transaksi");
 
         jLabel4.setText("ID Karyawan");
-
-        jLabel5.setText("Gaji");
-
-        jLabel6.setText("Lemburan");
-
-        txtTransport.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        txtInsentif.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel7.setText("Transport");
-
-        jLabel8.setText("Insentif");
-
-        jLabel9.setText("Potongan");
-
-        jLabel11.setText("Total");
-
-        txtTotal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        txtTotal.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                txtTotalMouseClicked(evt);
-            }
-        });
 
         dtTrans.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         dtTrans.setOpaque(false);
 
         jLabel3.setText("Tanggal");
+
+        cmbIdAkun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel10.setText("ID Perkiraan");
+
+        txtKeterangan.setColumns(20);
+        txtKeterangan.setRows(5);
+        jScrollPane2.setViewportView(txtKeterangan);
+
+        jLabel12.setText("Keterangan");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -410,84 +424,53 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel12))
+                .addGap(38, 38, 38)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(53, 53, 53)
-                        .addComponent(txtTransport)
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel3))
-                        .addGap(38, 38, 38)
+                        .addGap(1, 1, 1)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(txtNoTransaksi))
-                                    .addComponent(txtGaji, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtLembur))
-                                .addGap(10, 10, 10))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(cmbKaryawan, 0, 352, Short.MAX_VALUE)
+                                .addComponent(cmbIdAkun, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap())
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtInsentif)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(dtTrans, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtTotal, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtPotongan))
-                                .addContainerGap())))))
+                                .addComponent(txtNoTransaksi)
+                                .addGap(10, 10, 10))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbKaryawan, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dtTrans, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNoTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(cmbKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtGaji, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtLembur, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtTransport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(txtInsentif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPotongan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(dtTrans, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
@@ -561,6 +544,102 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtPotongan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        txtPotongan.setOpaque(false);
+        txtPotongan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPotonganKeyTyped(evt);
+            }
+        });
+
+        txtGaji.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        txtGaji.setOpaque(false);
+        txtGaji.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtGajiKeyTyped(evt);
+            }
+        });
+
+        txtTotal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        txtTotal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTotalMouseClicked(evt);
+            }
+        });
+
+        jLabel7.setText("Transport");
+
+        txtLembur.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtInsentif.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel6.setText("Lemburan");
+
+        jLabel9.setText("Potongan");
+
+        jLabel5.setText("Gaji");
+
+        jLabel11.setText("Total");
+
+        txtTransport.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel8.setText("Insentif");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel7))
+                .addGap(53, 53, 53)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtLembur)
+                    .addComponent(txtTransport, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtGaji)
+                    .addComponent(txtTotal)
+                    .addComponent(txtPotongan, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtInsentif, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtGaji, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtLembur, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtTransport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtInsentif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtPotongan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -568,16 +647,22 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(152, 152, 152)
                 .addComponent(jLabel2)
-                .addGap(19, 19, 19))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblRecord)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 19, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblRecord)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -586,12 +671,15 @@ public class IfrPenggajian extends javax.swing.JInternalFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(5, 5, 5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(lblRecord))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblRecord)
+                .addGap(24, 24, 24))
         );
 
         pack();
@@ -669,10 +757,13 @@ int vgaji = Integer.parseInt(txtGaji.getText());
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JComboBox<String> cmbIdAkun;
     private javax.swing.JComboBox<String> cmbKaryawan;
     private com.toedter.calendar.JDateChooser dtTrans;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -683,11 +774,14 @@ int vgaji = Integer.parseInt(txtGaji.getText());
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataGaji;
     private javax.swing.JTextField txtGaji;
     private javax.swing.JTextField txtInsentif;
+    private javax.swing.JTextArea txtKeterangan;
     private javax.swing.JTextField txtLembur;
     private javax.swing.JTextField txtNoTransaksi;
     private javax.swing.JTextField txtPotongan;

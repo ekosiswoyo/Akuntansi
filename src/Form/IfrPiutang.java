@@ -15,8 +15,8 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete;
-    String vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, mid, vtgl, vkaryawan;
+    String sqlselect, sqlinsert, sqldelete, sqlkas, sqljurnal;
+    String vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, mid, vtgl, vkaryawan, vidakun;
     
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
@@ -32,6 +32,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         setTabel();
         showData();
         listSum();
+        listAkun();
     }
     
     private void clearForm(){
@@ -41,6 +42,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         txtJumlah.setText("");
         txtKeterangan.setText("");
         cmbKaryawan.setSelectedIndex(0);
+        cmbIdAkun.setSelectedIndex(0);
         dtTrans.setDate(new java.util.Date());
     }
     
@@ -51,6 +53,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         txtKeterangan.setEnabled(false);
         cmbKaryawan.setSelectedIndex(0);
         
+        cmbIdAkun.setSelectedIndex(0);
         dtTrans.setEnabled(false);
         btnSimpan.setEnabled(false);
         btnHapus.setEnabled(false);
@@ -64,6 +67,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         btnSimpan.setEnabled(true);
         dtTrans.setEnabled(true);
         cmbKaryawan.setSelectedIndex(0);
+        cmbIdAkun.setSelectedIndex(0);
         btnHapus.setEnabled(true);
     }
      
@@ -136,6 +140,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     private void aksiSimpan(){
           vid_piutang = txtPiutang.getText();
           vid_karyawan = KeySum[cmbKaryawan.getSelectedIndex()];
+          vidakun = KeyAkun[cmbIdAkun.getSelectedIndex()];
           vjml_piutang = txtJumlah.getText();
           vpotongan = txtPotongan.getText();
           vketerangan = txtKeterangan.getText();
@@ -143,7 +148,10 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into piutang values "
                         + " ('"+vid_piutang+"','"+vid_karyawan+"', '"+vjml_piutang+"', '"+vpotongan+"','"+vketerangan+"','"+vtgl+"') ";
-            
+            sqlkas = "insert into kas_keluar values "
+                    + " ('"+vid_piutang+"','"+vtgl+"', '"+vidakun+"', '"+vketerangan+"', '"+vjml_piutang+"') ";
+            sqljurnal = "insert into jurnal_umum values "
+                    + " ('"+vid_piutang+"','"+vidakun+"', '"+vjml_piutang+"','0',  '"+vtgl+"') "; 
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
                sqlinsert = "update piutang set id_karyawan ='"+vid_karyawan+"', jml_piutang ='"+vjml_piutang+"', potongan = '"+vpotongan+"', keterangan = '"+vketerangan+"', tgl = '"+vtgl+"' where id_piutang ='"+vid_piutang+"' ";
@@ -154,7 +162,9 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             Statement state = _Cnn.createStatement();
-            state.executeUpdate(sqlinsert);
+             state.executeUpdate(sqlinsert);
+            state.executeUpdate(sqlkas);
+            state.executeUpdate(sqljurnal);
             
             clearForm(); disableForm(); showData();Id();
         }catch(SQLException ex){
@@ -268,7 +278,32 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         }
     }
  
-    
+     String[] KeyAkun;
+    private void listAkun(){
+        try{
+            _Cnn = null;
+            _Cnn = getCnn.getConnection();
+            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
+            Statement stat = _Cnn.createStatement();
+            ResultSet res = stat.executeQuery(sqlselect);
+            cmbIdAkun.removeAllItems();
+            cmbIdAkun.repaint();
+            cmbIdAkun.addItem("-- PILIH PERKIRAAN AKUN --");
+            int i = 1;
+            while(res.next()){
+                cmbIdAkun.addItem(res.getString("nm_perkiraan"));
+                i++;
+            }
+            res.first();
+            KeyAkun = new String[i+1];
+            for(Integer x =1;x < i;x++){
+                KeyAkun[x] = res.getString(1);
+                res.next();
+            }
+        } catch (SQLException ex){
+            JOptionPane.showMessageDialog(this, "Error Method listSum " +ex);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -288,6 +323,8 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         dtTrans = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
+        cmbIdAkun = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
@@ -356,6 +393,10 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Tanggal");
 
+        cmbIdAkun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel8.setText("ID Akun");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -368,25 +409,19 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                             .addComponent(jLabel1)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel6))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addComponent(txtPotongan))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(38, 38, 38)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(1, 1, 1)
-                                                .addComponent(txtPiutang))
-                                            .addComponent(txtJumlah, javax.swing.GroupLayout.Alignment.TRAILING))
-                                        .addGap(10, 10, 10))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(cmbKaryawan, 0, 342, Short.MAX_VALUE)
-                                        .addContainerGap())))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(37, 37, 37)
-                                .addComponent(txtPotongan)
-                                .addContainerGap())))
+                                    .addComponent(txtPiutang, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtJumlah, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(cmbKaryawan, 0, 342, Short.MAX_VALUE)
+                                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
@@ -394,13 +429,17 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                         .addGap(53, 53, 53)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dtTrans, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtKeterangan))
-                        .addContainerGap())))
+                            .addComponent(txtKeterangan))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPiutang, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -420,10 +459,11 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(txtKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dtTrans, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)))
+                    .addComponent(jLabel3))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
@@ -521,8 +561,8 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                 .addGap(9, 9, 9)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(5, 5, 5)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -596,6 +636,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JComboBox<String> cmbIdAkun;
     private javax.swing.JComboBox<String> cmbKaryawan;
     private com.toedter.calendar.JDateChooser dtTrans;
     private javax.swing.JLabel jLabel1;
@@ -605,6 +646,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

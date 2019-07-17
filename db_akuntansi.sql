@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 15 Jul 2019 pada 12.17
+-- Waktu pembuatan: 17 Jul 2019 pada 07.08
 -- Versi server: 10.1.37-MariaDB
 -- Versi PHP: 7.3.1
 
@@ -152,7 +152,14 @@ CREATE TABLE `jurnal_umum` (
 --
 
 INSERT INTO `jurnal_umum` (`no_transaksi`, `id_akun`, `debet`, `kredit`, `tgl_transaksi`) VALUES
-('JUR-022', '3', 120000, 10000, '2019-07-09');
+('dd23', 'AKUN-004', 4000, 0, '2019-07-16'),
+('JUR-022', '3', 120000, 10000, '2019-07-09'),
+('PIU-003', '3', 12000, 0, '2019-07-17'),
+('TRANS-PGJ-005', 'null', 102900, 0, '2019-07-17'),
+('TRANS-PGJ-006', '3', 13320, 0, '2019-07-17'),
+('TRANS-PMB-001', '3', 68000, 0, '2019-07-17'),
+('TRANS-PMB-002', '3', 23000, 0, '2019-07-17'),
+('TRANS-PNJ-005', 'AKUN-004', 0, 20000, '2019-07-17');
 
 -- --------------------------------------------------------
 
@@ -173,8 +180,14 @@ CREATE TABLE `kas_keluar` (
 --
 
 INSERT INTO `kas_keluar` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
+('dd23', '2019-07-16', 'AKUN-004', 'qweqeq', 4000),
+('PIU-003', '2019-07-17', '3', 'sad', 12000),
 ('TRANS-KK-003', '2019-07-09', '3', 'das', 10000),
-('TRANS-KK-004', '2019-07-12', '3', 'sa', 12000);
+('TRANS-KK-004', '2019-07-12', '3', 'sa', 12000),
+('TRANS-PGJ-005', '2019-07-17', 'null', 'null', 102900),
+('TRANS-PGJ-006', '2019-07-17', '3', 'ad', 13320),
+('TRANS-PMB-001', '2019-07-17', '3', 'sadsad', 68000),
+('TRANS-PMB-002', '2019-07-17', '3', 'asdasda', 23000);
 
 -- --------------------------------------------------------
 
@@ -197,7 +210,8 @@ CREATE TABLE `kas_masuk` (
 INSERT INTO `kas_masuk` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `nominal`) VALUES
 ('TRANS-KM-013', '2019-06-25', '3', 'asd', 2000),
 ('TRANS-KM-014', '2019-07-08', '3', 'jdsa', 90000),
-('TRANS-KM-015', '2019-07-12', 'AKUN-004', 'asd', 12000);
+('TRANS-KM-015', '2019-07-12', 'AKUN-004', 'asd', 12000),
+('TRANS-PNJ-005', '2019-07-17', 'AKUN-004', 'null', 20000);
 
 -- --------------------------------------------------------
 
@@ -219,15 +233,8 @@ CREATE TABLE `pembelian` (
 --
 
 INSERT INTO `pembelian` (`id_pembelian`, `no_trans`, `id_barang`, `qty`, `harga`, `jumlah`) VALUES
-(1, 'SUP-002', '1', 3, 20000, 60000),
-(2, 'SUP-002', '1', 2, 12000, 24000),
-(3, 'SUP-002', '1', 2, 20000, 40000),
-(4, 'a', 'v', 1, 2, 3),
-(5, '45', '1', 2, 33, 66),
-(6, '56', '1', 2, 12, 24),
-(7, '532', '1', 2, 23, 46),
-(8, '579', '1', 1, 2, 2),
-(9, '9888', '1', 4, 45, 180);
+(1, 'TRANS-PMB-001', '1', 2, 34000, 68000),
+(2, 'TRANS-PMB-002', '1', 23, 1000, 23000);
 
 -- --------------------------------------------------------
 
@@ -246,8 +253,8 @@ CREATE TABLE `pembelian_header` (
 --
 
 INSERT INTO `pembelian_header` (`no_trans`, `id_supplier`, `tgl`) VALUES
-('579', 'SUP-002', '2019-07-15'),
-('9888', 'SUP-002', '2019-07-15');
+('TRANS-PMB-001', 'SUP-002', '2019-07-17'),
+('TRANS-PMB-002', 'SUP-003', '2019-07-17');
 
 -- --------------------------------------------------------
 
@@ -273,7 +280,9 @@ CREATE TABLE `penggajian` (
 
 INSERT INTO `penggajian` (`no_transaksi`, `id_karyawan`, `gaji`, `lemburan`, `transport`, `insentif`, `potongan`, `total`, `tgl`) VALUES
 ('TRANS-PGJ-003', '1', 120000, 23000, 12000, 89000, 12000, 232000, '2019-07-08'),
-('TRANS-PGJ-004', 'KRY-001', 2, 3, 4, 1, 1, 9, '2019-07-13');
+('TRANS-PGJ-004', 'KRY-001', 2, 3, 4, 1, 1, 9, '2019-07-13'),
+('TRANS-PGJ-005', 'KRY-001', 12000, 9000, 900, 90000, 9000, 102900, '2019-07-17'),
+('TRANS-PGJ-006', 'KRY-001', 1200, 12, 120, 12000, 12, 13320, '2019-07-17');
 
 -- --------------------------------------------------------
 
@@ -282,24 +291,43 @@ INSERT INTO `penggajian` (`no_transaksi`, `id_karyawan`, `gaji`, `lemburan`, `tr
 --
 
 CREATE TABLE `penjualan` (
-  `no_transaksi` varchar(20) NOT NULL,
-  `id_customer` varchar(11) DEFAULT NULL,
+  `id_penjualan` int(11) NOT NULL,
+  `no_trans` varchar(20) NOT NULL,
   `eartag` varchar(6) DEFAULT NULL,
   `sex` enum('JANTAN','BETINA') DEFAULT NULL,
   `bb` int(11) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
-  `keterangan` text,
-  `tgl` date DEFAULT NULL
+  `keterangan` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data untuk tabel `penjualan`
 --
 
-INSERT INTO `penjualan` (`no_transaksi`, `id_customer`, `eartag`, `sex`, `bb`, `harga`, `keterangan`, `tgl`) VALUES
-('TRANS-PNJ-002', '1', '24', '', 22, 30000, 'ok', '2019-06-24'),
-('TRANS-PNJ-003', 'CS-004', 'sad', 'BETINA', 12, 1200, 'gfh', '2019-07-08'),
-('TRANS-PNJ-004', 'CS-002', 'd', 'JANTAN', 12, 12000, 'dfs', '2019-07-12');
+INSERT INTO `penjualan` (`id_penjualan`, `no_trans`, `eartag`, `sex`, `bb`, `harga`, `keterangan`) VALUES
+(1, 'TRANS-PNJ-002', '24', '', 22, 30000, 'ok'),
+(2, 'TRANS-PNJ-003', 'sad', 'BETINA', 12, 1200, 'gfh'),
+(3, 'TRANS-PNJ-004', 'd', 'JANTAN', 12, 12000, 'dfs'),
+(4, 'TRANS-PNJ-005', 'sd', 'JANTAN', 12, 20000, 'asdasdas');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `penjualan_header`
+--
+
+CREATE TABLE `penjualan_header` (
+  `no_trans` varchar(20) DEFAULT NULL,
+  `id_customer` varchar(20) DEFAULT NULL,
+  `tgl` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `penjualan_header`
+--
+
+INSERT INTO `penjualan_header` (`no_trans`, `id_customer`, `tgl`) VALUES
+('TRANS-PNJ-005', 'CS-002', '2019-07-17');
 
 -- --------------------------------------------------------
 
@@ -344,6 +372,7 @@ CREATE TABLE `piutang` (
 INSERT INTO `piutang` (`id_piutang`, `id_karyawan`, `jml_piutang`, `potongan`, `keterangan`, `tgl`) VALUES
 ('1', '1', 10000, 20000, 'a', '2019-06-25'),
 ('PIU-002', 'KRY-001', 12, 1, 'as', '2019-07-13'),
+('PIU-003', 'KRY-001', 12000, 1200, 'sad', '2019-07-17'),
 ('PIU003', '1', 3333, 1, 'sa', '2019-07-08');
 
 -- --------------------------------------------------------
@@ -432,7 +461,7 @@ ALTER TABLE `penggajian`
 -- Indeks untuk tabel `penjualan`
 --
 ALTER TABLE `penjualan`
-  ADD PRIMARY KEY (`no_transaksi`);
+  ADD PRIMARY KEY (`id_penjualan`);
 
 --
 -- Indeks untuk tabel `perkiraan_akun`
@@ -460,7 +489,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT untuk tabel `penjualan`
+--
+ALTER TABLE `penjualan`
+  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`

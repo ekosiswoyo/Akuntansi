@@ -10,7 +10,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT * FROM KAS_KELUAR A, PERKIRAAN_AKUN B WHERE A.ID_AKUN=B.KD_PERKIRAAN AND A.TGL_NOTA BETWEEN $P{parTglAwal} AND $P{parTglAkhir} ORDER BY TGL_NOTA DESC, NO_TRANSAKSI DESC]]>
+		<![CDATA[SELECT * FROM KAS_KELUAR A, PERKIRAAN_AKUN B WHERE A.ID_AKUN=B.ID_AKUN AND A.TGL_NOTA BETWEEN $P{parTglAwal} AND $P{parTglAkhir} ORDER BY TGL_NOTA DESC, NO_TRANSAKSI DESC]]>
 	</queryString>
 	<field name="no_transaksi" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -25,9 +25,6 @@
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nominal" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="kd_perkiraan" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="golongan" class="java.lang.String">

@@ -36,7 +36,7 @@
 	<field name="total" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="tgl" class="java.sql.Timestamp">
+	<field name="tgl" class="java.sql.Date">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<variable name="TOTAL_AKHIR" class="java.lang.Long">

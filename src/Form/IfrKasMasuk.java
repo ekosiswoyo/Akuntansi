@@ -15,7 +15,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete;
+    String sqlselect, sqlinsert, sqldelete, sqljurnal;
     String vid_transaksi, vakun,vnamaakun, vtanggal, vketerangan, vnominal, mid;
     
     DefaultTableModel tblkas;
@@ -135,6 +135,8 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
             sqlinsert = "insert into kas_masuk values "
                         + " ('"+vid_transaksi+"', '"+vtanggal+"', '"+vakun+"',  '"+vketerangan+"','"+vnominal+"') ";
             
+            sqljurnal = "insert into jurnal_umum values "
+                    + " ('"+vid_transaksi+"','"+vakun+"', '"+vnominal+"', '0', '"+vtanggal+"') ";
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
                sqlinsert = "update kas_masuk set tgl_nota ='"+vtanggal+"', id_akun ='"+vakun+"',  keterangan= '"+vketerangan+"', nominal = '"+vnominal+"' where no_transaksi='"+vid_transaksi+"' ";
@@ -146,6 +148,7 @@ public class IfrKasMasuk extends javax.swing.JInternalFrame {
             _Cnn = getCnn.getConnection();
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
+            state.executeUpdate(sqljurnal);
             
             clearForm(); disableForm(); showData();Id();
         }catch(SQLException ex){

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 17 Jul 2019 pada 07.08
+-- Waktu pembuatan: 18 Jul 2019 pada 03.49
 -- Versi server: 10.1.37-MariaDB
 -- Versi PHP: 7.3.1
 
@@ -159,6 +159,7 @@ INSERT INTO `jurnal_umum` (`no_transaksi`, `id_akun`, `debet`, `kredit`, `tgl_tr
 ('TRANS-PGJ-006', '3', 13320, 0, '2019-07-17'),
 ('TRANS-PMB-001', '3', 68000, 0, '2019-07-17'),
 ('TRANS-PMB-002', '3', 23000, 0, '2019-07-17'),
+('TRANS-PMB-003', '3', 26000, 0, '2019-07-18'),
 ('TRANS-PNJ-005', 'AKUN-004', 0, 20000, '2019-07-17');
 
 -- --------------------------------------------------------
@@ -187,7 +188,8 @@ INSERT INTO `kas_keluar` (`no_transaksi`, `tgl_nota`, `id_akun`, `keterangan`, `
 ('TRANS-PGJ-005', '2019-07-17', 'null', 'null', 102900),
 ('TRANS-PGJ-006', '2019-07-17', '3', 'ad', 13320),
 ('TRANS-PMB-001', '2019-07-17', '3', 'sadsad', 68000),
-('TRANS-PMB-002', '2019-07-17', '3', 'asdasda', 23000);
+('TRANS-PMB-002', '2019-07-17', '3', 'asdasda', 23000),
+('TRANS-PMB-003', '2019-07-18', '3', 'asdsa', 26000);
 
 -- --------------------------------------------------------
 
@@ -234,7 +236,8 @@ CREATE TABLE `pembelian` (
 
 INSERT INTO `pembelian` (`id_pembelian`, `no_trans`, `id_barang`, `qty`, `harga`, `jumlah`) VALUES
 (1, 'TRANS-PMB-001', '1', 2, 34000, 68000),
-(2, 'TRANS-PMB-002', '1', 23, 1000, 23000);
+(2, 'TRANS-PMB-002', '1', 23, 1000, 23000),
+(3, 'TRANS-PMB-003', '1', 1, 26000, 26000);
 
 -- --------------------------------------------------------
 
@@ -254,7 +257,8 @@ CREATE TABLE `pembelian_header` (
 
 INSERT INTO `pembelian_header` (`no_trans`, `id_supplier`, `tgl`) VALUES
 ('TRANS-PMB-001', 'SUP-002', '2019-07-17'),
-('TRANS-PMB-002', 'SUP-003', '2019-07-17');
+('TRANS-PMB-002', 'SUP-003', '2019-07-17'),
+('TRANS-PMB-003', 'SUP-003', '2019-07-18');
 
 -- --------------------------------------------------------
 
@@ -489,7 +493,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `penjualan`

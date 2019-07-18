@@ -10,12 +10,12 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT * FROM PENJUALAN A, DT_CUSTOMER B WHERE A.ID_CUSTOMER=B.ID_CUSTOMER AND A.TGL BETWEEN $P{parAwal} AND $P{parAkhir} ORDER BY TGL DESC, A.NO_TRANSAKSI DESC]]>
+		<![CDATA[select * from penjualan a, penjualan_header b, dt_customer c WHERE a.no_trans=b.no_trans AND b.id_customer=c.id_customer AND B.TGL BETWEEN $P{parAwal} AND $P{parAkhir} order by a.no_trans DESC]]>
 	</queryString>
-	<field name="no_transaksi" class="java.lang.String">
+	<field name="id_penjualan" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="id_customer" class="java.lang.String">
+	<field name="no_trans" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="eartag" class="java.lang.String">
@@ -33,7 +33,10 @@
 	<field name="keterangan" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="tgl" class="java.sql.Timestamp">
+	<field name="id_customer" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl" class="java.sql.Date">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nm_customer" class="java.lang.String">
@@ -249,19 +252,6 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="29" y="0" width="102" height="20" uuid="4f80d0c2-b559-4d2e-b2d0-ff94a8e2a583"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{no_transaksi}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement x="131" y="0" width="131" height="20" uuid="1e101f69-10eb-4d32-b250-62ec051ef2d0"/>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -325,6 +315,19 @@
 					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bb}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="29" y="0" width="102" height="20" uuid="4f80d0c2-b559-4d2e-b2d0-ff94a8e2a583"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no_trans}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

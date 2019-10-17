@@ -172,6 +172,7 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
+                    
                     txtIdCustomer.setText(res.getString("id_customer"));
                     txtNmCustomer.setText(res.getString("nm_customer"));
                     txtAlamat.setText(res.getString("alamat"));
@@ -184,29 +185,30 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
    
  private void Id(){
         //kode jenis
-        if(btnSimpan.getText().equals("Simpan")){
+       if(btnSimpan.getText().equals("Simpan")){
+               
             try{
                 _Cnn = getCnn.getConnection();
                 String id = "select max(right(id_customer,3)) as id_customer from dt_customer";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
-               while(res.next()){
+                while(res.next()){
                     if(res.first() == false){
-                        mid = "CS-" + "001";
+                        mid = "CUS-" + "001";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
 //                        int noLong = no.length();
 //                        for(int a=0;a<2-noLong;a++){
-//                            no = "TRANS-PNJ-" + no;
+//                            no = "SUP-" + no;
 //                        }
                         if(noID < 10){
-                            mid =  "CS-" + "00" + no;
+                            mid =  "CUS-" + "00" + no;
                         } else if(noID < 100){
-                            mid = "CS-" + "0" + no;
+                            mid = "CUS-" + "0" + no;
                         } else{
-                            mid= "CS-" + no;
+                            mid= "CUS-" + no;
                         }
                         txtIdCustomer.setText(mid);
                         }
@@ -218,7 +220,27 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
         }
         //kode jenis
     }
-    
+  private void cariCustomer(){
+         try{
+            _Cnn = null;
+            _Cnn = getCnn.getConnection();
+            clearTabel();
+            sqlselect =  "select * from dt_customer where nm_customer like '%"+txtCari.getText()+"%' order by id_customer asc ";
+            Statement stat = _Cnn.createStatement();
+            ResultSet res = stat.executeQuery(sqlselect);
+            while(res.next()){
+                vid_customer = res.getString("id_customer");
+                vnm_customer = res.getString("nm_customer");
+                valamat = res.getString("alamat");
+                vno_telepon = res.getString("no_telepon");
+                Object[]data = {vid_customer, vnm_customer, valamat, vno_telepon};
+                tblcustomer.addRow(data);
+            }
+            lblRecord.setText("Record : "+tbDataCustomer.getRowCount());
+        }catch (SQLException ex){
+                JOptionPane.showMessageDialog(this, "Error Method : " + ex);
+            }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -240,9 +262,13 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtCari = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataCustomer = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         jScrollPane2.setViewportView(jEditorPane1);
 
@@ -256,12 +282,15 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setText("Entri Data Customer");
+        jLabel2.setText(" Data Customer");
+        jLabel2.setOpaque(true);
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setOpaque(false);
 
         txtNmCustomer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtNmCustomer.setOpaque(false);
@@ -338,7 +367,9 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 53, -1, 188));
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Navigasi"));
         jPanel2.setOpaque(false);
 
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/insert.png"))); // NOI18N
@@ -365,28 +396,63 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel6.setText("Silahkan Mencari");
+
+        txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCariKeyTyped(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(31, 31, 31)
                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(83, 83, 83)
+                .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 3, Short.MAX_VALUE))
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel6)
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 259, -1, 68));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -406,40 +472,15 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tbDataCustomer);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 338, 844, 150));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(666, 499, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(94, 94, 94))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(lblRecord)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(lblRecord))
-        );
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (1).jpg"))); // NOI18N
+        jLabel7.setText("jLabel7");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 870, 560));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -507,17 +548,37 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAlamatActionPerformed
 
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
+        cariCustomer();
+    }//GEN-LAST:event_txtCariKeyTyped
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabel();
+        showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JButton jButton1;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -525,6 +586,7 @@ public class IfrCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataCustomer;
     private javax.swing.JTextField txtAlamat;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtIdCustomer;
     private javax.swing.JTextField txtNmCustomer;
     private javax.swing.JTextField txtNoTelepon;

@@ -1,6 +1,4 @@
-    
 package Form;
-
 import Tool.ConfigDB;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -16,8 +14,8 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
     Connection _Cnn;
     
     String sqlselect, sqlinsert, sqldelete;
-    String vid_karyawan, vnama, valamat, vtelepon, vjabatan, vstatus, vketerangan, vmasuk, vkerja, mid;
-    
+    String vid_karyawan, vnama, valamat, vtelepon, vjabatan, vstatus, vketerangan, vmasuk, mid;
+    String visi_awal;
     DefaultTableModel tblkaryawan;
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
@@ -42,7 +40,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         txtStatus.setText("");
         txtKeterangan.setText("");
         dtMasuk.setDate(new java.util.Date());
-        dtKerja.setDate(new java.util.Date());
+//        dtKerja.setDate(new java.util.Date());
         cmbJabatan.setSelectedIndex(0);
     }
     
@@ -54,7 +52,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         txtStatus.setEnabled(false);
         txtKeterangan.setEnabled(false);
         dtMasuk.setEnabled(false);
-        dtKerja.setEnabled(false);
+//        dtKerja.setEnabled(false);
         cmbJabatan.setSelectedIndex(0);
         btnSimpan.setEnabled(false);
         btnHapus.setEnabled(false);
@@ -67,7 +65,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         txtNoTelepon.setEnabled(true);
         txtStatus.setEnabled(true);
         dtMasuk.setEnabled(true);
-        dtKerja.setEnabled(true);
+//        dtKerja.setEnabled(true);
         txtKeterangan.setEnabled(true);
         btnSimpan.setEnabled(true);
         cmbJabatan.setSelectedIndex(0);
@@ -76,7 +74,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
      
    
     private void setTabel(){
-        String[]kolom1 = {"Id Karyawan", "Nama" , "Alamat", "No Telepon", "Jabatan", "Status", "Keterangan", "Tanggal Masuk", "Masa Kerja"};
+        String[]kolom1 = {"Id Karyawan", "Nama" , "Alamat", "No Telepon", "Jabatan", "Status", "Keterangan", "Tanggal Masuk"};
         tblkaryawan = new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
                 java.lang.String.class,
@@ -108,7 +106,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         tbDataKaryawan.getColumnModel().getColumn(5).setPreferredWidth(75);
         tbDataKaryawan.getColumnModel().getColumn(6).setPreferredWidth(75);
         tbDataKaryawan.getColumnModel().getColumn(7).setPreferredWidth(75);
-        tbDataKaryawan.getColumnModel().getColumn(8).setPreferredWidth(75);
+       
     }
     
     private void clearTabel(){
@@ -135,15 +133,15 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                 vstatus = res.getString("status");
                 vketerangan = res.getString("keterangan");
                 vmasuk = res.getString("tgl_masuk");
-                vkerja = res.getString("masa_kerja");
+               
                 
-                Object[]data = {vid_karyawan, vnama, valamat, vtelepon, vjabatan, vstatus, vketerangan, vmasuk, vkerja};
+                Object[]data = {vid_karyawan, vnama, valamat, vtelepon, vjabatan, vstatus, vketerangan, vmasuk};
                 tblkaryawan.addRow(data);
             }Id();
                  btnTambah.setText("Tambah");
             lblRecord.setText("Record : "+tbDataKaryawan.getRowCount());
         }catch (SQLException ex){
-                JOptionPane.showMessageDialog(this, "Error Method showdataUser : " + ex);
+                JOptionPane.showMessageDialog(this, "Error Method showdataKaryawan: " + ex);
             }
     }
     private void aksiSimpan(){
@@ -155,14 +153,14 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
           vstatus = txtStatus.getText();
           vketerangan = txtKeterangan.getText();
           vmasuk = tglinput.format(dtMasuk.getDate());
-          vkerja = tglinput.format(dtKerja.getDate());
+//          vkerja = tglinput.format(dtKerja.getDate());
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into dt_karyawan values "
-                        + " ('"+vid_karyawan+"', '"+vnama+"', '"+valamat+"', '"+vtelepon+"','"+vjabatan+"',  '"+vstatus+"', '"+vketerangan+"', '"+vmasuk+"', '"+vkerja+"') ";
+                        + " ('"+vid_karyawan+"', '"+vnama+"', '"+valamat+"', '"+vtelepon+"','"+vjabatan+"',  '"+vstatus+"', '"+vketerangan+"', '"+vmasuk+"') ";
             
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
-               sqlinsert = "update dt_karyawan set nama ='"+vnama+"', alamat ='"+valamat+"', no_telepon = '"+vtelepon+"', jabatan = '"+vjabatan+"', status = '"+vstatus+"', keterangan = '"+vketerangan+"', tgl_masuk = '"+vmasuk+"', masa_kerja = '"+vkerja+"' where id_karyawan='"+vid_karyawan+"' ";
+               sqlinsert = "update dt_karyawan set nama ='"+vnama+"', alamat ='"+valamat+"', no_telepon = '"+vtelepon+"', jabatan = '"+vjabatan+"', status = '"+vstatus+"', keterangan = '"+vketerangan+"', tgl_masuk = '"+vmasuk+"' where id_karyawan='"+vid_karyawan+"' ";
                               
                JOptionPane.showMessageDialog(this, "Data Berhasil diUbah");
            }
@@ -246,6 +244,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
+                     visi_awal = res.getString("nama");
                     txtIdKaryawan.setText(res.getString("id_karyawan"));
                     cmbJabatan.setSelectedItem(res.getString("jabatan"));
                     txtNama.setText(res.getString("nama"));
@@ -254,7 +253,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                     txtStatus.setText(res.getString("status"));
                     txtKeterangan.setText(res.getString("keterangan"));
                     dtMasuk.setDate(res.getDate("tgl_masuk"));
-                    dtKerja.setDate(res.getDate("masa_kerja"));
+//                    dtKerja.setDate(res.getDate("masa_kerja"));
 
                 }   
             }catch(SQLException ex){
@@ -288,7 +287,33 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
 //        }
 //    }
  
-    
+    private void cariKaryawan(){
+         try{
+            _Cnn = null;
+            _Cnn = getCnn.getConnection();
+            clearTabel();
+            sqlselect =  "select * from dt_karyawan where nm_karyawan like '%"+txtCari.getText()+"%' order by id_karyawan asc";
+            Statement stat = _Cnn.createStatement();
+            ResultSet res = stat.executeQuery(sqlselect);
+            while(res.next()){
+                vid_karyawan = res.getString("id_karyawan");
+                vnama = res.getString("nama");
+                valamat = res.getString("alamat");
+                vtelepon = res.getString("no_telepon");
+                vjabatan = res.getString("jabatan");
+                vstatus = res.getString("status");
+                vketerangan = res.getString("keterangan");
+                vmasuk = res.getString("tgl_masuk");
+               
+                
+                Object[]data = {vid_karyawan, vnama, valamat, vtelepon, vjabatan, vstatus, vketerangan, vmasuk};
+                tblkaryawan.addRow(data);
+            }
+            lblRecord.setText("Record : "+tbDataKaryawan.getRowCount());
+        }catch (SQLException ex){
+                JOptionPane.showMessageDialog(this, "Error Method showdataKaryawan: " + ex);
+            }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -298,7 +323,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         txtAlamat = new javax.swing.JTextField();
         txtIdKaryawan = new javax.swing.JTextField();
-        cmbJabatan = new javax.swing.JComboBox<>();
+        cmbJabatan = new javax.swing.JComboBox<String>();
         txtNama = new javax.swing.JTextField();
         txtNoTelepon = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -310,17 +335,23 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         txtKeterangan = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        dtKerja = new com.toedter.calendar.JDateChooser();
         jLabel9 = new javax.swing.JLabel();
         dtMasuk = new com.toedter.calendar.JDateChooser();
-        jLabel11 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        txtCari = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataKaryawan = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel2.setText("Entri Data Karyawan");
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Form Input"));
         setClosable(true);
@@ -332,12 +363,9 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setText("Entri Data Karyawan");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setOpaque(false);
 
         txtAlamat.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtAlamat.setOpaque(false);
@@ -348,14 +376,13 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         });
 
         txtIdKaryawan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        txtIdKaryawan.setOpaque(false);
         txtIdKaryawan.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtIdKaryawanKeyTyped(evt);
             }
         });
 
-        cmbJabatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- PILIH JABATAN --", "Staff", "Kepala" }));
+        cmbJabatan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- PILIH JABATAN --", "Staff", "Operator", "Kandang", "Lahan" }));
 
         txtNama.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtNama.setOpaque(false);
@@ -385,15 +412,10 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
 
         jLabel8.setText("Keterangan");
 
-        dtKerja.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dtKerja.setOpaque(false);
-
         jLabel9.setText("Tanggal Masuk");
 
         dtMasuk.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         dtMasuk.setOpaque(false);
-
-        jLabel11.setText("Masa Kerja");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -409,11 +431,9 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
                     .addComponent(jLabel8)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel11))
+                    .addComponent(jLabel9))
                 .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dtKerja, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(1, 1, 1)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -462,12 +482,10 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel9)
                     .addComponent(dtMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dtKerja, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(24, 24, 24))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, -1, 240));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
         jPanel2.setOpaque(false);
@@ -496,6 +514,29 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel10.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel10.setText("Silahkan Mencari");
+
+        txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCariKeyTyped(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -507,26 +548,39 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 5, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(jButton1)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 10, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 300, -1, -1));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         tbDataKaryawan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Karyawan", "Nama", "Alamat", "No Telepon", "Jabatan", "Status", "Keterangan", "Tanggal Masuk", "Masa Kerja"
+                "ID Karyawan", "Nama", "Alamat", "No Telepon", "Jabatan", "Status", "Keterangan", "Tanggal Masuk"
             }
         ));
         tbDataKaryawan.setRowHeight(25);
@@ -537,41 +591,19 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tbDataKaryawan);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 802, 123));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 500, -1, 20));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addComponent(jLabel2)
-                .addGap(19, 19, 19))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblRecord)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 10, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(5, 5, 5)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(lblRecord))
-        );
+        jLabel12.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel12.setText("DATA KARYAWAN");
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (2).jpg"))); // NOI18N
+        jLabel11.setText("jLabel11");
+        getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 520));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -594,8 +626,26 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Jabatan harus diisi ! ",
             "Informasi", JOptionPane.INFORMATION_MESSAGE); 
         }else{
-            aksiSimpan();
-        }
+            try {
+                String sqlCari = "";
+                if(btnSimpan.getText().equals("Simpan")){
+                    sqlCari = "select * from dt_karyawan where nama='"+txtNama.getText()+"'";
+                }else{
+                    sqlCari = "select * from dt_karyawan where nama='"+txtNama.getText()+"' "
+                            + "and nama not in ('"+visi_awal+"')";
+                }
+                Statement s = (Statement)getCnn.getConnection().createStatement();
+                ResultSet r = s.executeQuery(sqlCari);
+                if(r.next()){
+                    JOptionPane.showMessageDialog(this, "Karyawan tersebut sudah ada ! ",
+                        "Informasi", JOptionPane.INFORMATION_MESSAGE);  
+                }else{
+                    aksiSimpan();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }                    
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -634,16 +684,35 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNamaKeyTyped
 
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
+        cariKaryawan();
+    }//GEN-LAST:event_txtCariKeyTyped
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabel();
+        showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cmbJabatan;
-    private com.toedter.calendar.JDateChooser dtKerja;
     private com.toedter.calendar.JDateChooser dtMasuk;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -658,6 +727,7 @@ public class IfrKaryawan extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataKaryawan;
     private javax.swing.JTextField txtAlamat;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtIdKaryawan;
     private javax.swing.JTextField txtKeterangan;
     private javax.swing.JTextField txtNama;

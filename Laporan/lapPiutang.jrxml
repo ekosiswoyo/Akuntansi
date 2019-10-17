@@ -36,6 +36,9 @@
 	<variable name="JUMLAH" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$V{TOTAL_AKHIR}]]></variableExpression>
 	</variable>
+	<variable name="jml_piutang_1" class="java.lang.Integer" resetType="Group" resetGroup="fJumlah" calculation="Sum">
+		<variableExpression><![CDATA[$F{jml_piutang}]]></variableExpression>
+	</variable>
 	<group name="fJumlah">
 		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
 		<groupFooter>
@@ -69,8 +72,8 @@
 				<text><![CDATA[PT. KEJORA PELITA SEMESTA]]></text>
 			</staticText>
 			<image>
-				<reportElement x="11" y="10" width="61" height="58" uuid="e3353bcb-5306-479b-b836-bca21127e6eb"/>
-				<imageExpression><![CDATA["D:\\Akuntansi\\Laporan\\logo.png"]]></imageExpression>
+				<reportElement x="203" y="0" width="80" height="68" uuid="87fee0ba-25ce-46db-baac-f3092d8737e0"/>
+				<imageExpression><![CDATA["E:\\Akuntansi-master\\Laporan\\logo.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -88,14 +91,14 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{parTglAwal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy",new java.util.Locale("id")).format($P{parTglAwal})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy">
 				<reportElement x="193" y="0" width="171" height="20" uuid="3738c17d-76c2-4121-9b27-79ec047be0a9"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{parTglAkhir}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy",new java.util.Locale("id")).format($P{parTglAkhir})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="165" y="0" width="28" height="20" uuid="511b87e1-4730-4a4b-ab81-045ca97e98a2"/>
@@ -126,7 +129,7 @@
 				<text><![CDATA[NO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="1" width="128" height="20" uuid="f94b0bea-bec8-44db-9979-8a0ac4d0fb9a"/>
+				<reportElement x="29" y="1" width="76" height="20" uuid="f94b0bea-bec8-44db-9979-8a0ac4d0fb9a"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -140,7 +143,21 @@
 				<text><![CDATA[ID PIUTANG]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="157" y="0" width="157" height="20" uuid="2797c71e-43de-43d2-9ed6-c18d279781af"/>
+				<reportElement x="484" y="0" width="281" height="20" uuid="c4977bfa-08da-4a38-bfbd-8cb9b78dba67"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="4.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KETERANGAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="1" width="105" height="20" uuid="2797c71e-43de-43d2-9ed6-c18d279781af"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -154,21 +171,7 @@
 				<text><![CDATA[ID KARYAWAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="314" y="0" width="157" height="20" uuid="80ac59ec-c0d7-4044-a603-41e6a505995a"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="4.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[JUMLAH PIUTANG]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="471" y="0" width="157" height="20" uuid="8fbd810a-ff28-4f5e-9619-f9ee7f38d5c5"/>
+				<reportElement x="391" y="1" width="93" height="20" uuid="8fbd810a-ff28-4f5e-9619-f9ee7f38d5c5"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -182,7 +185,7 @@
 				<text><![CDATA[POTONGAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="628" y="0" width="157" height="20" uuid="c4977bfa-08da-4a38-bfbd-8cb9b78dba67"/>
+				<reportElement x="106" y="1" width="84" height="20" uuid="1675a018-0335-4b8d-a258-d60d4425b494"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -193,15 +196,29 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[KETERANGAN]]></text>
+				<text><![CDATA[TANGGAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="1" width="94" height="20" uuid="80ac59ec-c0d7-4044-a603-41e6a505995a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="4.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH PIUTANG]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
+			<textField pattern="#,##0;(#,##0)">
 				<reportElement x="0" y="0" width="29" height="20" uuid="c89b300a-5f6d-4cae-8218-55f918b86944"/>
-				<box>
+				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -213,9 +230,9 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="29" y="0" width="128" height="20" uuid="b3b06730-7427-4c0b-943d-0d0ec71b9261"/>
-				<box>
+			<textField pattern="Rp #,##0">
+				<reportElement x="29" y="0" width="76" height="20" uuid="b3b06730-7427-4c0b-943d-0d0ec71b9261"/>
+				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -227,37 +244,9 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_piutang}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="314" y="0" width="157" height="20" uuid="825620a9-c8d0-488e-b278-89f8aed14d64"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{jml_piutang}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="471" y="0" width="157" height="20" uuid="b9789e52-35ec-4007-bd89-684ea68c7fe5"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{potongan}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="628" y="0" width="157" height="20" uuid="23cade52-86e8-4150-9e31-6df1b8ddf55a"/>
-				<box>
+			<textField pattern="Rp #,##0">
+				<reportElement x="484" y="0" width="281" height="20" uuid="23cade52-86e8-4150-9e31-6df1b8ddf55a"/>
+				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -269,9 +258,18 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{keterangan}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="157" y="0" width="157" height="20" uuid="f70ce726-3323-4efd-8351-310f46d1cc22"/>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="106" y="1" width="84" height="19" uuid="79825d38-ed16-48f2-bd02-0119e427b120"/>
 				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tgl}]]></textFieldExpression>
+			</textField>
+			<textField pattern="Rp #,##0">
+				<reportElement x="191" y="0" width="105" height="20" uuid="f70ce726-3323-4efd-8351-310f46d1cc22"/>
+				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -283,6 +281,54 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_karyawan}]]></textFieldExpression>
 			</textField>
+			<textField pattern=" #,##0">
+				<reportElement x="321" y="1" width="70" height="19" uuid="825620a9-c8d0-488e-b278-89f8aed14d64"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jml_piutang}]]></textFieldExpression>
+			</textField>
+			<textField pattern=" #,##0">
+				<reportElement x="415" y="0" width="68" height="20" uuid="b9789e52-35ec-4007-bd89-684ea68c7fe5"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{potongan}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="296" y="1" width="24" height="19" uuid="0a8f413f-70ef-41ea-8884-823861ca9b13"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="391" y="1" width="24" height="19" uuid="aaab347b-a42b-423a-97cb-f0bcc42a6d54"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<pageFooter>
@@ -299,7 +345,7 @@
 	<summary>
 		<band height="116">
 			<staticText>
-				<reportElement x="597" y="0" width="189" height="29" uuid="8cc2b090-257a-44e3-bb94-dc5e60b871d9"/>
+				<reportElement x="576" y="0" width="189" height="29" uuid="8cc2b090-257a-44e3-bb94-dc5e60b871d9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>

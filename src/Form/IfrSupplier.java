@@ -16,6 +16,7 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
     
     String sqlselect, sqlinsert, sqldelete;
     String vid_supplier, vnm_supplier, valamat, vno_telepon, vno_rekening, mid;
+    String visi_awal;
     
     DefaultTableModel tblsupplier;
     
@@ -179,6 +180,7 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
+                    visi_awal = res.getString("nm_supplier");
                     txtIdSupplier.setText(res.getString("id_supplier"));
                     txtNmSupplier.setText(res.getString("nm_supplier"));
                     txtAlamat.setText(res.getString("alamat"));
@@ -227,6 +229,29 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
         }
         //kode jenis
     }
+  private void cariSupplier(){
+         try{
+            _Cnn = null;
+            _Cnn = getCnn.getConnection();
+            clearTabel(); 
+           
+            sqlselect =  "select * from dt_supplier where nm_supplier like '%"+txtCari.getText()+"%' order by id_supplier asc ";
+            Statement stat = _Cnn.createStatement();
+            ResultSet res = stat.executeQuery(sqlselect);
+            while(res.next()){
+                vid_supplier = res.getString("id_supplier");
+                vnm_supplier = res.getString("nm_supplier");
+                valamat = res.getString("alamat");
+                vno_telepon = res.getString("no_telepon");
+                vno_rekening = res.getString("no_rekening");
+                Object[]data = {vid_supplier, vnm_supplier, valamat, vno_telepon, vno_rekening};
+                tblsupplier.addRow(data);
+            }
+            lblRecord.setText("Record : "+tbDataSupplier.getRowCount());
+        }catch (SQLException ex){
+                JOptionPane.showMessageDialog(this, "Error Method : " + ex);
+            }
+    }
     
 
     @SuppressWarnings("unchecked")
@@ -251,9 +276,13 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        txtCari = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataSupplier = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         jScrollPane2.setViewportView(jEditorPane1);
 
@@ -267,12 +296,14 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setText("Entri Data Supplier");
+        jLabel2.setText("Data Supplier");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 13, -1, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setOpaque(false);
 
         txtNmSupplier.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtNmSupplier.setOpaque(false);
@@ -306,6 +337,11 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
         jLabel5.setText("No Telepon");
 
         txtNoRekening.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        txtNoRekening.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNoRekeningKeyTyped(evt);
+            }
+        });
 
         jLabel.setText("No Rekening");
 
@@ -364,7 +400,9 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 53, -1, 218));
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Navigasi"));
         jPanel2.setOpaque(false);
 
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/insert.png"))); // NOI18N
@@ -391,28 +429,61 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
             }
         });
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCariKeyTyped(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel14.setText("Silahkan Mencari");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 3, Short.MAX_VALUE))
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)))
         );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 284, -1, -1));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -432,40 +503,15 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tbDataSupplier);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 362, 694, 173));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(551, 541, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(94, 94, 94))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblRecord)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(lblRecord))
-        );
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (2).jpg"))); // NOI18N
+        jLabel6.setText("jLabel6");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 580));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -496,7 +542,25 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "No Rekening harus diisi ! ",
             "Informasi", JOptionPane.INFORMATION_MESSAGE); 
         }else{
-            aksiSimpan();
+            try {
+                String sqlCari = "";
+                if(btnSimpan.getText().equals("Simpan")){
+                    sqlCari = "select * from dt_supplier where nm_supplier='"+txtNmSupplier.getText()+"'";
+                }else{
+                    sqlCari = "select * from dt_supplier where nm_supplier='"+txtNmSupplier.getText()+"' "
+                            + "and nm_supplier not in ('"+visi_awal+"')";
+                }
+                Statement s = (Statement)getCnn.getConnection().createStatement();
+                ResultSet r = s.executeQuery(sqlCari);
+                if(r.next()){
+                    JOptionPane.showMessageDialog(this, "Supplier tersebut sudah ada ! ",
+                        "Informasi", JOptionPane.INFORMATION_MESSAGE);  
+                }else{
+                    aksiSimpan();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -536,18 +600,47 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAlamatActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabel();
+        showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
+        cariSupplier();
+    }//GEN-LAST:event_txtCariKeyTyped
+
+    private void txtNoRekeningKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNoRekeningKeyTyped
+        // TODO add your handling code here:
+        char inputan = evt.getKeyChar();
+        if(txtNoRekening.getText().length() > 19){
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtNoRekeningKeyTyped
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JButton jButton1;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -555,6 +648,7 @@ public class IfrSupplier extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataSupplier;
     private javax.swing.JTextField txtAlamat;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtIdSupplier;
     private javax.swing.JTextField txtNmSupplier;
     private javax.swing.JTextField txtNoRekening;

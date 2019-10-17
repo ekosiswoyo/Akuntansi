@@ -24,6 +24,8 @@ public class Laporan extends javax.swing.JInternalFrame {
     Connection Conn;
     String sqlselect;
     String vkd_kat, vnm_kat, vtglAwal, vtglAkhir;
+    int Saldo=0;
+    SimpleDateFormat date_f = new SimpleDateFormat("yyyy-MM-dd");
 //    String id = FrMenu.getU_id();
     
     public Laporan() {
@@ -83,8 +85,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -99,8 +101,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -115,8 +117,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -131,8 +133,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -147,8 +149,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -163,8 +165,8 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -179,8 +181,25 @@ public class Laporan extends javax.swing.JInternalFrame {
             Map<String, Object> parameters = new HashMap<>();
             Conn = null;
             Conn = getCnn.getConnection();
-            parameters.put("parAwal",dtTglAwal.getDate());
-            parameters.put("parAkhir",dtTglAkhir.getDate());
+            ResultSet rm = Conn.createStatement().executeQuery("select sum(nominal) as total from kas_masuk "
+                    + "where tgl_nota between '"+date_f.format(dtTglAwal.getDate())+"' and "
+                    + "'"+date_f.format(dtTglAkhir.getDate())+"'");
+            if(rm.next()){
+                Saldo = rm.getInt("total");
+                System.out.println(rm.getInt("total"));
+                System.out.println(Saldo);
+            }
+            ResultSet rk = Conn.createStatement().executeQuery("select sum(nominal) as total from kas_keluar "
+                    + "where tgl_nota between '"+date_f.format(dtTglAwal.getDate())+"' and "
+                    + "'"+date_f.format(dtTglAkhir.getDate())+"'");
+            if(rk.next()){
+                Saldo -= rk.getInt("total");
+                System.out.println(rk.getInt("total"));
+                System.out.println(Saldo);
+            }
+            parameters.put("Saldo", Saldo);
+            parameters.put("parTglAwal",dtTglAwal.getDate());
+            parameters.put("parTglAkhir",dtTglAkhir.getDate());
             JasperReport jrpt = JasperCompileManager.compileReport(pth);
             JasperPrint jprint = JasperFillManager.fillReport(jrpt, parameters, Conn);
             JasperViewer.viewReport(jprint, false);
@@ -218,6 +237,11 @@ public class Laporan extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setTitle("CETAK LAPORAN - SILUB");
+
+        jTabbedPane1.setBackground(new java.awt.Color(0, 0, 255));
+
+        jPanel2.setBackground(new java.awt.Color(0, 0, 255));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true), "Pilihan Laporan : "));
         jPanel5.setOpaque(false);
@@ -324,6 +348,8 @@ public class Laporan extends javax.swing.JInternalFrame {
                     .addComponent(btnArus)))
         );
 
+        jPanel2.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 375, -1));
+
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true), "Periode : "));
         jPanel7.setOpaque(false);
 
@@ -369,26 +395,7 @@ public class Laporan extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(51, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel2.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, -1, -1));
 
         jTabbedPane1.addTab("Transaksi", jPanel2);
 
@@ -436,10 +443,12 @@ public class Laporan extends javax.swing.JInternalFrame {
 
     private void btnMasukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMasukActionPerformed
 //        cetakLapReturPembelian();
+        cetakLapMasukPerTgl();
     }//GEN-LAST:event_btnMasukActionPerformed
 
     private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
 //        cetakLapReturPenjualan();
+        cetakLapKeluarPerTgl();
     }//GEN-LAST:event_btnKeluarActionPerformed
 
     private void btnArusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArusActionPerformed

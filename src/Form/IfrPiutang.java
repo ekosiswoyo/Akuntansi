@@ -5,6 +5,7 @@ import Tool.ConfigDB;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -15,14 +16,14 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete, sqlkas, sqljurnal;
+    String sqlselect, sqlinsert, sqldelete, sqlkas, sqldebet, sqlkredit;
     String vid_piutang, vid_karyawan, vjml_piutang, vpotongan, vketerangan, mid, vtgl, vkaryawan, vidakun;
     
     
     SimpleDateFormat tglview = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblpiutang;
-    
+    DecimalFormat uang_indo = new DecimalFormat("Rp #,##0.00");
     public IfrPiutang() {
         initComponents();
         
@@ -32,7 +33,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         setTabel();
         showData();
         listSum();
-        listAkun();
+       
     }
     
     private void clearForm(){
@@ -42,7 +43,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         txtJumlah.setText("");
         txtKeterangan.setText("");
         cmbKaryawan.setSelectedIndex(0);
-        cmbIdAkun.setSelectedIndex(0);
+       
         dtTrans.setDate(new java.util.Date());
     }
     
@@ -52,11 +53,9 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         txtJumlah.setEnabled(false);
         txtKeterangan.setEnabled(false);
         cmbKaryawan.setSelectedIndex(0);
-        
-        cmbIdAkun.setSelectedIndex(0);
         dtTrans.setEnabled(false);
         btnSimpan.setEnabled(false);
-        btnHapus.setEnabled(false);
+      //  btnHapus.setEnabled(false);
     }
 
      private void enableForm(){
@@ -67,8 +66,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         btnSimpan.setEnabled(true);
         dtTrans.setEnabled(true);
         cmbKaryawan.setSelectedIndex(0);
-        cmbIdAkun.setSelectedIndex(0);
-        btnHapus.setEnabled(true);
+      //  btnHapus.setEnabled(true);
     }
      
    
@@ -123,8 +121,8 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                 vid_piutang = res.getString("id_piutang");
                 vid_karyawan = res.getString("id_karyawan");
                 vkaryawan = res.getString("nama");
-                vjml_piutang = res.getString("jml_piutang");
-                vpotongan = res.getString("potongan");
+                vjml_piutang = uang_indo.format(res.getDouble("jml_piutang"));
+                vpotongan = uang_indo.format(res.getDouble("potongan"));
                 vketerangan = res.getString("keterangan");
                 vtgl = res.getString("tgl");
                 
@@ -134,13 +132,12 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                  btnTambah.setText("Tambah");
             lblRecord.setText("Record : "+tbDataPiutang.getRowCount());
         }catch (SQLException ex){
-                JOptionPane.showMessageDialog(this, "Error Method showdataUser : " + ex);
+                JOptionPane.showMessageDialog(this, "Error Method showdataPiutang : " + ex);
             }
     }
     private void aksiSimpan(){
           vid_piutang = txtPiutang.getText();
           vid_karyawan = KeySum[cmbKaryawan.getSelectedIndex()];
-          vidakun = KeyAkun[cmbIdAkun.getSelectedIndex()];
           vjml_piutang = txtJumlah.getText();
           vpotongan = txtPotongan.getText();
           vketerangan = txtKeterangan.getText();
@@ -149,30 +146,33 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             sqlinsert = "insert into piutang values "
                         + " ('"+vid_piutang+"','"+vid_karyawan+"', '"+vjml_piutang+"', '"+vpotongan+"','"+vketerangan+"','"+vtgl+"') ";
             sqlkas = "insert into kas_keluar values "
-                    + " ('"+vid_piutang+"','"+vtgl+"', '"+vidakun+"', '"+vketerangan+"', '"+vjml_piutang+"') ";
-            sqljurnal = "insert into jurnal_umum values "
-                    + " ('"+vid_piutang+"','"+vidakun+"', '"+vjml_piutang+"','0',  '"+vtgl+"') "; 
+                    + " ('"+vid_piutang+"','"+vtgl+"', '1-1011', '"+vketerangan+"', '"+vjml_piutang+"') ";
+             sqldebet = "insert into jurnal_umum values "
+                    + " ('"+vid_piutang+"','1-1011','"+vjml_piutang+"', '0', '"+vtgl+"') "; 
+            sqlkredit = "insert into jurnal_umum values "
+                    + " ('"+vid_piutang+"','1-1001', '0','"+vjml_piutang+"', '"+vtgl+"') ";
+            
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
-           }else{
+          /* }else{
                sqlinsert = "update piutang set id_karyawan ='"+vid_karyawan+"', jml_piutang ='"+vjml_piutang+"', potongan = '"+vpotongan+"', keterangan = '"+vketerangan+"', tgl = '"+vtgl+"' where id_piutang ='"+vid_piutang+"' ";
                               
                JOptionPane.showMessageDialog(this, "Data Berhasil diUbah");
-           }
+           }*/
            try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
             Statement state = _Cnn.createStatement();
              state.executeUpdate(sqlinsert);
             state.executeUpdate(sqlkas);
-            state.executeUpdate(sqljurnal);
-            
+            state.executeUpdate(sqldebet);
+            state.executeUpdate(sqlkredit);
             clearForm(); disableForm(); showData();Id();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error Method aksiSimpan() : "+ex);
         } 
     }
     
-    private void aksiHapus(){
+   /* private void aksiHapus(){
         int jawab = JOptionPane.showConfirmDialog(this, 
                 "Apakah anda yakin akan menghapus data ini ? ID : "+vid_piutang,
                 "Konfirmasi ",JOptionPane.YES_NO_OPTION);
@@ -190,10 +190,11 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         }
         
     }
-        
+  */       
     }   
-    
-     private void Id(){
+   
+     
+private void Id(){
         //kode jenis
         if(btnSimpan.getText().equals("Simpan")){
             try{
@@ -278,33 +279,31 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         }
     }
  
-     String[] KeyAkun;
-    private void listAkun(){
-        try{
+     private void cariPiutang(){
+         try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
-            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
+            clearTabel();
+            sqlselect =  "select * from piutang a, dt_karyawan b where a.id_karyawan=b.id_karyawan like '%"+txtCari.getText()+"%' order by a.id_piutang asc";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
-            cmbIdAkun.removeAllItems();
-            cmbIdAkun.repaint();
-            cmbIdAkun.addItem("-- PILIH PERKIRAAN AKUN --");
-            int i = 1;
             while(res.next()){
-                cmbIdAkun.addItem(res.getString("nm_perkiraan"));
-                i++;
+                vid_piutang = res.getString("id_piutang");
+                vid_karyawan = res.getString("id_karyawan");
+                vkaryawan = res.getString("nama");
+                vjml_piutang = res.getString("jml_piutang");
+                vpotongan = res.getString("potongan");
+                vketerangan = res.getString("keterangan");
+                vtgl = res.getString("tgl");
+                
+                Object[]data = {vid_piutang, vid_karyawan, vkaryawan, vjml_piutang, vpotongan, vketerangan, vtgl};
+                tblpiutang.addRow(data);
             }
-            res.first();
-            KeyAkun = new String[i+1];
-            for(Integer x =1;x < i;x++){
-                KeyAkun[x] = res.getString(1);
-                res.next();
+            lblRecord.setText("Record : "+tbDataPiutang.getRowCount());
+        }catch (SQLException ex){
+                JOptionPane.showMessageDialog(this, "Error Method showdataPiutang: " + ex);
             }
-        } catch (SQLException ex){
-            JOptionPane.showMessageDialog(this, "Error Method listSum " +ex);
-        }
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -313,7 +312,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         txtJumlah = new javax.swing.JTextField();
         txtPiutang = new javax.swing.JTextField();
-        cmbKaryawan = new javax.swing.JComboBox<>();
+        cmbKaryawan = new javax.swing.JComboBox<String>();
         txtPotongan = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -323,15 +322,16 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         dtTrans = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
-        cmbIdAkun = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
-        btnHapus = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        txtCari = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataPiutang = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Form Input"));
         setClosable(true);
@@ -343,12 +343,14 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setText("Entri Data Piutang");
+        jLabel2.setText(" Data Piutang");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(193, 4, -1, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setOpaque(false);
 
         txtJumlah.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtJumlah.setOpaque(false);
@@ -366,7 +368,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             }
         });
 
-        cmbKaryawan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbKaryawan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         txtPotongan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtPotongan.setOpaque(false);
@@ -393,10 +395,6 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Tanggal");
 
-        cmbIdAkun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel8.setText("ID Akun");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -409,8 +407,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                             .addComponent(jLabel1)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel6))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(37, 37, 37)
@@ -420,8 +417,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtPiutang, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(txtJumlah, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(cmbKaryawan, 0, 342, Short.MAX_VALUE)
-                                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                    .addComponent(cmbKaryawan, 0, 342, Short.MAX_VALUE)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
@@ -435,11 +431,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(37, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPiutang, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -466,6 +458,8 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 37, -1, -1));
+
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
         jPanel2.setOpaque(false);
 
@@ -485,13 +479,28 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
             }
         });
 
-        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/btn_delete.png"))); // NOI18N
-        btnHapus.setText("Hapus");
-        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHapusActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
+
+        txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCariKeyTyped(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel14.setText("Silahkan Mencari");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -502,19 +511,29 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 5, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel14)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 13, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 282, 626, -1));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -534,41 +553,15 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tbDataPiutang);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 355, 616, 118));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(524, 491, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addComponent(jLabel2)
-                .addGap(19, 19, 19))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblRecord)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 19, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(lblRecord))
-        );
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (2).jpg"))); // NOI18N
+        jLabel8.setText("jLabel8");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 510));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -595,26 +588,15 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
-    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-      
-         if(txtPiutang.getText().equals("")){
-            JOptionPane.showMessageDialog(this, "Belum ada data yang dipilih ! ",
-            "Informasi",JOptionPane.INFORMATION_MESSAGE );  
-         
-        }else{
-            aksiHapus();
-        }
-    }//GEN-LAST:event_btnHapusActionPerformed
-
     private void tbDataPiutangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataPiutangMouseClicked
-          if(evt.getClickCount()==2){
+         /* if(evt.getClickCount()==2){
             vid_piutang = tbDataPiutang.getValueAt(tbDataPiutang.getSelectedRow(), 0).toString();
                getData();
                
             
             btnSimpan.setText("Ubah");
             enableForm();
-        }
+        }*/
     }//GEN-LAST:event_tbDataPiutangMouseClicked
 
     private void txtPotonganKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPotonganKeyTyped
@@ -631,15 +613,32 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtJumlahKeyTyped
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabel();
+        showData();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
+        cariPiutang();
+    }//GEN-LAST:event_txtCariKeyTyped
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
-    private javax.swing.JComboBox<String> cmbIdAkun;
     private javax.swing.JComboBox<String> cmbKaryawan;
     private com.toedter.calendar.JDateChooser dtTrans;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -652,6 +651,7 @@ public class IfrPiutang extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataPiutang;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtJumlah;
     private javax.swing.JTextField txtKeterangan;
     private javax.swing.JTextField txtPiutang;

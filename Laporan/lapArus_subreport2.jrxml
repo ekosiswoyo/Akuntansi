@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lapArus_subreport2" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9fd3536c-ce44-4d29-9f1d-85a56bafb3fe">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="parTglAwal" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parTglAkhir" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select sum(A.nominal), B.nm_perkiraan 
+from kas_keluar as A 
+inner join perkiraan_akun as B on A.id_akun=B.id_akun 
+where tgl_nota between $P{parTglAwal} and $P{parTglAkhir}
+group by A.id_akun]]>
+	</queryString>
+	<field name="sum(A.nominal)" class="java.math.BigDecimal"/>
+	<field name="nm_perkiraan" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="sum(A.nominal)_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum(A.nominal)}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="385" height="20" uuid="fe2b686f-0643-4f12-b4d7-e3e63305e9a0"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ARUS KAS KELUAR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="289" height="20" uuid="f8f8779c-2cea-43f5-9e0d-04e664bd0401"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textFieldExpression><![CDATA[$F{nm_perkiraan}]]></textFieldExpression>
+			</textField>
+			<textField pattern=" #,##0">
+				<reportElement x="313" y="0" width="72" height="20" uuid="e85f11e8-eb0a-44ab-9240-b6774302750a"/>
+				<box leftPadding="5" rightPadding="5">
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{sum(A.nominal)}).replace(',','.')]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="289" y="0" width="24" height="20" uuid="fe441d2f-855b-481d-a7e2-0327ca83ccb3"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band height="21" splitType="Stretch">
+			<textField pattern=" #,##0">
+				<reportElement x="313" y="0" width="72" height="20" uuid="829ec025-88d5-452f-b916-9f52c8da07e4"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{sum(A.nominal)_1}).replace(',','.')]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="289" height="20" uuid="904849f6-a9ea-44c5-9870-d17ccfe4228f"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL KAS KELUAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="0" width="24" height="20" uuid="3f475c96-2f98-4cba-aed7-a607fdf45b3a"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[Rp]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

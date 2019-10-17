@@ -16,14 +16,12 @@ public class IfrUser extends javax.swing.JInternalFrame {
     
     String sqlselect, sqlinsert, sqldelete;
     String vid_user, vusername, vpassword, vlevel, vdeskripsi, vnm_user, mid;
-    
+    String visi_awal;
     DefaultTableModel tbluser;
     
     public IfrUser() {
         initComponents();
-        
-
-        
+    
         Id();
         clearForm();
         disableForm();
@@ -99,10 +97,11 @@ public class IfrUser extends javax.swing.JInternalFrame {
         }
     }
     private void Id(){
-         if(btnSimpan.getText().equals("Simpan")){
+      
+        if(btnSimpan.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_supplier,1)) as id_supplier from dt_supplier";
+                String id = "select max(id_user) as id_user from user";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                 while(res.next()){
@@ -112,32 +111,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-                        int noLong = no.length();
-                        for(int a=0;a<2-noLong;a++){
-                            no = "ID" + no;
-                        }
-                        if(noID < 10){
-                            mid =  no;
-                        } else if(noID < 100){
-                            mid = no;
-                        }else if(noID < 1000){
-                            mid = no;
-                        }else if(noID < 10000){
-                            mid = no;
-                        }else if(noID < 100000){
-                            mid = no;
-                        }else if(noID < 1000000){
-                            mid = no;    
-                        }else if(noID < 10000000){
-                            mid = no;
-                        }else if(noID < 100000000){
-                            mid = no;    
-                        }else if(noID < 1000000000){
-                            mid = no;  
-                         
-                        } else{
-                            mid= ""+ no;
-                        }
+                        mid = no;
                         txtIdUser.setText(mid);
                         }
                    
@@ -232,6 +206,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
+                        visi_awal = res.getString("username");
                     txtIdUser.setText(res.getString("id_user"));
                     txtNmUser.setText(res.getString("nm_user"));
                     txtUsername.setText(res.getString("username"));
@@ -257,7 +232,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
         txtPassword = new javax.swing.JPasswordField();
         txtUsername = new javax.swing.JTextField();
         txtIdUser = new javax.swing.JTextField();
-        cmbLevel = new javax.swing.JComboBox<>();
+        cmbLevel = new javax.swing.JComboBox<String>();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -272,6 +247,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
 
         jScrollPane2.setViewportView(jEditorPane1);
 
@@ -285,12 +261,16 @@ public class IfrUser extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setText("Data Pengguna");
+        jLabel2.setOpaque(true);
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 27, 255, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Silahkan Input Data Pengguna :"));
-        jPanel1.setOpaque(false);
 
         txtPassword.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtPassword.setOpaque(false);
@@ -310,7 +290,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
 
         txtIdUser.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        cmbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih --", "General Manager", "Manager Keuangan", "Staff Administrasi" }));
+        cmbLevel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Pilih --", "General Manager", "Manager Keuangan", "Staff Administrasi" }));
         cmbLevel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         cmbLevel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -396,6 +376,8 @@ public class IfrUser extends javax.swing.JInternalFrame {
                     .addComponent(jLabel5)))
         );
 
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
+
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         tbDataUser.setModel(new javax.swing.table.DefaultTableModel(
@@ -417,8 +399,11 @@ public class IfrUser extends javax.swing.JInternalFrame {
             tbDataUser.getColumnModel().getColumn(0).setResizable(false);
         }
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 293, 520, 179));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 484, -1, -1));
 
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/insert.png"))); // NOI18N
         btnTambah.setText("Tambah");
@@ -427,6 +412,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
                 btnTambahActionPerformed(evt);
             }
         });
+        getContentPane().add(btnTambah, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 110, 103, 30));
 
         btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save-black.png"))); // NOI18N
         btnSimpan.setText("Simpan");
@@ -435,6 +421,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
                 btnSimpanActionPerformed(evt);
             }
         });
+        getContentPane().add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 146, 100, 30));
 
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/btn_delete.png"))); // NOI18N
         btnHapus.setText("Hapus");
@@ -443,53 +430,11 @@ public class IfrUser extends javax.swing.JInternalFrame {
                 btnHapusActionPerformed(evt);
             }
         });
+        getContentPane().add(btnHapus, new org.netbeans.lib.awtextra.AbsoluteConstraints(399, 182, 100, 30));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(270, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(470, Short.MAX_VALUE)
-                .addComponent(lblRecord)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(lblRecord))
-        );
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (1).jpg"))); // NOI18N
+        jLabel8.setText("jLabel8");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 530, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -498,6 +443,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
       
         enableForm();
         clearForm();
+        Id();
         txtIdUser.requestFocus(true);
         btnSimpan.setText("Simpan");
  
@@ -519,7 +465,25 @@ public class IfrUser extends javax.swing.JInternalFrame {
             
        
         }else{
-            aksiSimpan();
+            try {
+                String sqlCari = "";
+                if(btnSimpan.getText().equals("Simpan")){
+                    sqlCari = "select * from user where username='"+txtUsername.getText()+"'";
+                }else{
+                    sqlCari = "select * from user where username='"+txtUsername.getText()+"' "
+                            + "and username not in ('"+visi_awal+"')";
+                }
+                Statement s = (Statement)getCnn.getConnection().createStatement();
+                ResultSet r = s.executeQuery(sqlCari);
+                if(r.next()){
+                    JOptionPane.showMessageDialog(this, "username tersebut sudah ada ! ",
+                        "Informasi", JOptionPane.INFORMATION_MESSAGE);  
+                }else{
+                    aksiSimpan();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -573,6 +537,7 @@ public class IfrUser extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

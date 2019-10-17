@@ -5,6 +5,7 @@ package Form;
 
 
 import Tool.ConfigDB;
+import Image.backDPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.Timer;
 import java.util.Date;
-
+import org.apache.log4j.BasicConfigurator;
 
 public class FrMenu extends javax.swing.JFrame {
 
@@ -63,19 +64,19 @@ public class FrMenu extends javax.swing.JFrame {
     
     private void userGeneral(){
         mnMaster.setEnabled(true);
-        mnBarang.setVisible(false);
-        mnKaryawan.setVisible(false);
-        mnAkun.setVisible(false);
+        mnBarang.setVisible(true);
+        mnKaryawan.setVisible(true);
+        mnAkun.setVisible(true);
         
         mnTransaksi.setEnabled(true);
-        mnTransAngsuran.setVisible(false);
+        mnTransAngsuran.setVisible(true);
         
         mnLaporan.setEnabled(true);
-//        mnAngsuran.setVisible(false);
+//       mnAngsuran.setVisible(false);
         
         mnPengaturan.setEnabled(true);
         
-        back.setVisible(false);
+//        back.setVisible(false);
         btnLogin.setVisible(false);
     }
     private void userKeuangan(){
@@ -85,25 +86,25 @@ public class FrMenu extends javax.swing.JFrame {
         mnBarang.setVisible(false);
         
         mnTransaksi.setEnabled(true);
-        mnTransPembelian.setVisible(false);
-        mnTransPiutang.setVisible(false);
-        mnTransAngsuran.setVisible(false);
+       mnTransPembelian.setVisible(false);
+     //   mnTransPiutang.setVisible(false);
+     //   mnTransAngsuran.setVisible(false);
         
         mnLaporan.setEnabled(true);
-//        mnPembelian.setVisible(false);
+//     mnPembelian.setVisible(false);
 //        mnAngsuran.setVisible(false);
-//        
-        mnPengaturan.setEnabled(true);
-        mnBantuan.setVisible(false);
         
-        back.setVisible(false);
+        mnPengaturan.setEnabled(true);
+     //   mnBantuan.setVisible(false);
+        
+        //back.setVisible(false);
         btnLogin.setVisible(false);
         
     }
     private void userAdministrasi(){
         mnMaster.setEnabled(true);
-        mnSupplier.setVisible(false);
-        mnCustomer.setVisible(false);
+     //   mnSupplier.setVisible(false);
+//        mnCustomer.setVisible(false);
         mnUser.setVisible(false);
         mnAkun.setVisible(false);
         
@@ -123,7 +124,7 @@ public class FrMenu extends javax.swing.JFrame {
         mnPengaturan.setEnabled(true);
         mnBackup.setVisible(false);
         
-        back.setVisible(false);
+   //     back.setVisible(false);
         btnLogin.setVisible(false);
         
     }
@@ -201,7 +202,7 @@ public class FrMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelDesktop = new javax.swing.JPanel();
+        panelDesktop = new backDPane();
         tabLogin = new javax.swing.JTabbedPane();
         panelLogin = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -214,16 +215,15 @@ public class FrMenu extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        btnLogin = new javax.swing.JButton();
         tgl = new javax.swing.JLabel();
         lbljam = new javax.swing.JLabel();
+        btnLogin = new javax.swing.JButton();
         lblId = new javax.swing.JLabel();
         lblHak_akses = new javax.swing.JLabel();
-        back = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         mnMaster = new javax.swing.JMenu();
         mnSupplier = new javax.swing.JMenuItem();
-        mnCustomer = new javax.swing.JMenuItem();
         mnUser = new javax.swing.JMenuItem();
         mnKaryawan = new javax.swing.JMenuItem();
         mnAkun = new javax.swing.JMenuItem();
@@ -251,11 +251,14 @@ public class FrMenu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        panelDesktop.setBackground(new java.awt.Color(255, 255, 255));
-        panelDesktop.setLayout(null);
+        panelDesktop.setBackground(new java.awt.Color(204, 204, 204));
+        panelDesktop.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tabLogin.setBackground(new java.awt.Color(51, 102, 255));
         tabLogin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tabLogin.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+
+        panelLogin.setBackground(new java.awt.Color(51, 51, 255));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("LOGIN");
@@ -267,6 +270,7 @@ public class FrMenu extends javax.swing.JFrame {
             }
         });
 
+        btnLogin1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnLogin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/login-blue.png"))); // NOI18N
         btnLogin1.setText("Login");
         btnLogin1.addActionListener(new java.awt.event.ActionListener() {
@@ -275,6 +279,7 @@ public class FrMenu extends javax.swing.JFrame {
             }
         });
 
+        btnBatal.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnBatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/0 - login.png"))); // NOI18N
         btnBatal.setText("Batal");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
@@ -290,8 +295,10 @@ public class FrMenu extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel2.setText("Username");
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel6.setText("Password");
 
         javax.swing.GroupLayout panelLoginLayout = new javax.swing.GroupLayout(panelLogin);
@@ -306,7 +313,7 @@ public class FrMenu extends javax.swing.JFrame {
                 .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLoginLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnLogin1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnLogin1)
                         .addGap(10, 10, 10)
                         .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(70, 70, 70))
@@ -314,7 +321,7 @@ public class FrMenu extends javax.swing.JFrame {
                         .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                         .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtIdUser, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -348,24 +355,33 @@ public class FrMenu extends javax.swing.JFrame {
 
         tabLogin.addTab("Login System", panelLogin);
 
-        panelDesktop.add(tabLogin);
-        tabLogin.setBounds(321, 202, 347, 210);
+        panelDesktop.add(tabLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, -1, -1));
 
-        jLabel3.setFont(new java.awt.Font("Copperplate Gothic Bold", 0, 24)); // NOI18N
+        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel3.setFont(new java.awt.Font("Copperplate Gothic Bold", 1, 50)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("PT. KEJORA PELITA SEMESTA");
         jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        panelDesktop.add(jLabel3);
-        jLabel3.setBounds(0, 11, 1062, 28);
+        panelDesktop.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(-20, 10, 1062, 220));
 
-        jLabel4.setFont(new java.awt.Font("Copperplate Gothic Bold", 0, 24)); // NOI18N
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setFont(new java.awt.Font("Copperplate Gothic Bold", 1, 36)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("JL.SUMATERA nO.19 PEKALONGAN");
         jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        panelDesktop.add(jLabel4);
-        jLabel4.setBounds(0, 54, 1062, 28);
+        panelDesktop.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 1062, 250));
 
+        tgl.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        tgl.setText("Tanggal");
+        panelDesktop.add(tgl, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 540, 190, -1));
+
+        lbljam.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lbljam.setText("Jam");
+        panelDesktop.add(lbljam, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 570, 190, -1));
+
+        btnLogin.setBackground(new java.awt.Color(0, 0, 255));
+        btnLogin.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnLogin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Login.png"))); // NOI18N
         btnLogin.setText("LOGIN");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -373,34 +389,26 @@ public class FrMenu extends javax.swing.JFrame {
                 btnLoginActionPerformed(evt);
             }
         });
-        panelDesktop.add(btnLogin);
-        btnLogin.setBounds(20, 580, 130, 32);
+        panelDesktop.add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 560, 130, 32));
 
-        tgl.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        tgl.setText("Tanggal");
-        panelDesktop.add(tgl);
-        tgl.setBounds(610, 550, 200, 22);
+        lblId.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lblId.setText("User");
+        panelDesktop.add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 540, 200, -1));
 
-        lbljam.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lbljam.setText("Jam");
-        panelDesktop.add(lbljam);
-        lbljam.setBounds(610, 580, 200, 22);
+        lblHak_akses.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lblHak_akses.setText("Hak Akses");
+        panelDesktop.add(lblHak_akses, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 570, 277, -1));
 
-        lblId.setText("ID. USER :");
-        panelDesktop.add(lblId);
-        lblId.setBounds(870, 560, 210, 14);
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/logo.png"))); // NOI18N
+        jLabel5.setText("jLabel5");
+        panelDesktop.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 60, 210, 190));
 
-        lblHak_akses.setText("HAK AKSES : ");
-        panelDesktop.add(lblHak_akses);
-        lblHak_akses.setBounds(870, 590, 230, 14);
-
-        back.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/back.jpg"))); // NOI18N
-        panelDesktop.add(back);
-        back.setBounds(470, -10, 1090, 820);
-
+        mnMaster.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnMaster.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/master2.png"))); // NOI18N
         mnMaster.setText("Master");
+        mnMaster.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
+        mnSupplier.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnSupplier.setText("Supplier");
         mnSupplier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -409,14 +417,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnMaster.add(mnSupplier);
 
-        mnCustomer.setText("Customer");
-        mnCustomer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnCustomerActionPerformed(evt);
-            }
-        });
-        mnMaster.add(mnCustomer);
-
+        mnUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnUser.setText("User");
         mnUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -425,6 +426,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnMaster.add(mnUser);
 
+        mnKaryawan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnKaryawan.setText("Karyawan");
         mnKaryawan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -433,6 +435,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnMaster.add(mnKaryawan);
 
+        mnAkun.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnAkun.setText("Akun");
         mnAkun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -441,6 +444,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnMaster.add(mnAkun);
 
+        mnBarang.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnBarang.setText("Barang");
         mnBarang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -451,14 +455,17 @@ public class FrMenu extends javax.swing.JFrame {
 
         jMenuBar2.add(mnMaster);
 
+        mnTransaksi.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnTransaksi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/trans1.png"))); // NOI18N
         mnTransaksi.setText("Transaksi");
+        mnTransaksi.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         mnTransaksi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mnTransaksiActionPerformed(evt);
             }
         });
 
+        mnTransPenjualan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransPenjualan.setText("Penjualan");
         mnTransPenjualan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -467,6 +474,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransPenjualan);
 
+        mnTransPembelian.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransPembelian.setText("Pembelian");
         mnTransPembelian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -475,6 +483,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransPembelian);
 
+        mnTransPenggajian.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransPenggajian.setText("Penggajian");
         mnTransPenggajian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -483,6 +492,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransPenggajian);
 
+        mnTransPiutang.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransPiutang.setText("Piutang");
         mnTransPiutang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -491,6 +501,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransPiutang);
 
+        mnTransJurnal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransJurnal.setText("Jurnal Umum");
         mnTransJurnal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -499,6 +510,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransJurnal);
 
+        mnTransMasuk.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransMasuk.setText("Kas Masuk");
         mnTransMasuk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -507,6 +519,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransMasuk);
 
+        mnTransKeluar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransKeluar.setText("Kas Keluar");
         mnTransKeluar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -515,6 +528,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnTransaksi.add(mnTransKeluar);
 
+        mnTransAngsuran.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnTransAngsuran.setText("Angsuran");
         mnTransAngsuran.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -527,14 +541,17 @@ public class FrMenu extends javax.swing.JFrame {
 
         jMenuBar2.add(mnTransaksi);
 
+        mnLaporan.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnLaporan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/report-small1.png"))); // NOI18N
         mnLaporan.setText("Laporan");
+        mnLaporan.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         mnLaporan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mnLaporanActionPerformed(evt);
             }
         });
 
+        mnPenjualan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnPenjualan.setText("Laporan");
         mnPenjualan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -545,9 +562,12 @@ public class FrMenu extends javax.swing.JFrame {
 
         jMenuBar2.add(mnLaporan);
 
+        mnPengaturan.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnPengaturan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/aktif-small.png"))); // NOI18N
         mnPengaturan.setText("Pengaturan");
+        mnPengaturan.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
+        mnBackup.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnBackup.setText("Backup");
         mnBackup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -556,6 +576,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnPengaturan.add(mnBackup);
 
+        mnBantuan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnBantuan.setText("Bantuan");
         mnBantuan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -564,6 +585,7 @@ public class FrMenu extends javax.swing.JFrame {
         });
         mnPengaturan.add(mnBantuan);
 
+        mnExit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         mnExit.setText("Keluar");
         mnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -583,15 +605,11 @@ public class FrMenu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(panelDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(10, 10, 10))
+            .addComponent(panelDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 1136, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(panelDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
         );
 
         pack();
@@ -752,25 +770,6 @@ IfrKasKeluar internal;
         }
             panelDesktop.add(internal);  
     }//GEN-LAST:event_mnTransAngsuranActionPerformed
-
-    private void mnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnCustomerActionPerformed
-       IfrCustomer internal;
-        
-//        panelDesktop.removeAll();
-        panelDesktop.repaint();
-        
-        jLabel3.setVisible(false);
-        jLabel4.setVisible(false);
-        internal = new IfrCustomer();
-        internal.setVisible(true);
-        try{
-            internal.setMaximum(false);
-        }catch(Exception e) {
-            
-        }
-            panelDesktop.add(internal);  
-          
-    }//GEN-LAST:event_mnCustomerActionPerformed
 
     private void mnSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnSupplierActionPerformed
         IfrSupplier internal;
@@ -946,13 +945,12 @@ IfrJurnal internal;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e){
         }
-        
+        BasicConfigurator.configure();
        new FrMenu().setVisible(true);        
     }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel back;
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnLogin1;
@@ -960,6 +958,7 @@ IfrJurnal internal;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator12;
@@ -975,7 +974,6 @@ IfrJurnal internal;
     private javax.swing.JMenuItem mnBackup;
     private javax.swing.JMenuItem mnBantuan;
     private javax.swing.JMenuItem mnBarang;
-    private javax.swing.JMenuItem mnCustomer;
     private javax.swing.JMenuItem mnExit;
     private javax.swing.JMenuItem mnKaryawan;
     private javax.swing.JMenu mnLaporan;
@@ -993,7 +991,7 @@ IfrJurnal internal;
     private javax.swing.JMenuItem mnTransPiutang;
     private javax.swing.JMenu mnTransaksi;
     private javax.swing.JMenuItem mnUser;
-    private javax.swing.JPanel panelDesktop;
+    private javax.swing.JDesktopPane panelDesktop;
     private javax.swing.JPanel panelLogin;
     private javax.swing.JTabbedPane tabLogin;
     private javax.swing.JLabel tgl;

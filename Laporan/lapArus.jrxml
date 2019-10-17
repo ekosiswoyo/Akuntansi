@@ -9,80 +9,66 @@
 	<parameter name="parTglAkhir" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["E:\\Akuntansi-master\\Laporan\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Saldo" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[SELECT
-     SUM(kas_masuk.NOMINAL) AS JUMLAHMASUK,
-     SUM(kas_keluar.NOMINAL) AS JUMLAHKELUAR,
-     kas_masuk.`keterangan` AS kas_masuk_keterangan,
-     kas_masuk.`nominal` AS kas_masuk_nominal,
-     kas_keluar.`keterangan` AS kas_keluar_keterangan,
-     kas_keluar.`nominal` AS kas_keluar_nominal
+		<![CDATA[SELECT *
 FROM
-     `kas_masuk` kas_masuk,
-     `kas_keluar` kas_keluar
-WHERE
-     kas_masuk.TGL_NOTA BETWEEN $P{parTglAwal} AND $P{parTglAkhir}
- AND kas_keluar.TGL_NOTA BETWEEN $P{parTglAwal} AND $P{parTglAkhir}]]>
+     kas_masuk]]>
 	</queryString>
-	<field name="JUMLAHMASUK" class="java.math.BigDecimal"/>
-	<field name="JUMLAHKELUAR" class="java.math.BigDecimal"/>
-	<field name="kas_masuk_keterangan" class="java.lang.String"/>
-	<field name="kas_masuk_nominal" class="java.lang.Integer"/>
-	<field name="kas_keluar_keterangan" class="java.lang.String"/>
-	<field name="kas_keluar_nominal" class="java.lang.Integer"/>
-	<variable name="TOTAL_AKHIR" class="java.lang.Long">
-		<variableExpression><![CDATA[]]></variableExpression>
+	<field name="no_transaksi" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tgl_nota" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id_akun" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="keterangan" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nominal" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="nominal_1" class="java.lang.Integer" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{nominal}]]></variableExpression>
 	</variable>
-	<variable name="JUMLAH" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$V{TOTAL_AKHIR}]]></variableExpression>
-	</variable>
-	<variable name="JUMLAHKELUAR_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fJumlah" calculation="Sum">
-		<variableExpression><![CDATA[$F{JUMLAHKELUAR}]]></variableExpression>
-	</variable>
-	<variable name="NOMINAL_MASUK_1" class="java.lang.Integer" resetType="Group" resetGroup="fJumlah" calculation="Sum">
-		<variableExpression><![CDATA[]]></variableExpression>
-	</variable>
-	<variable name="NOMINALKELUAR_1" class="java.lang.Integer" resetType="Group" resetGroup="fJumlah" calculation="Sum">
-		<variableExpression><![CDATA[]]></variableExpression>
-	</variable>
-	<variable name="kas_masuk_nominal_1" class="java.lang.Integer" resetType="Group" resetGroup="fJumlah" calculation="Sum">
-		<variableExpression><![CDATA[$F{kas_masuk_nominal}]]></variableExpression>
-	</variable>
-	<variable name="kas_keluar_nominal_1" class="java.lang.Integer" resetType="Group" resetGroup="fJumlah" calculation="Sum">
-		<variableExpression><![CDATA[$F{kas_keluar_nominal}]]></variableExpression>
+	<variable name="nominal_2" class="java.lang.Integer" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{nominal}]]></variableExpression>
 	</variable>
 	<group name="fJumlah">
 		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
 		<groupFooter>
-			<band height="20">
-				<staticText>
-					<reportElement x="289" y="0" width="171" height="20" uuid="510309c4-ce2c-48b8-8532-180e1f811a0a"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+			<band height="16">
+				<textField pattern="Rp #,##0">
+					<reportElement x="403" y="-1" width="382" height="17" uuid="beb15502-b223-4c5a-9bcc-22e8362f5bd4"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[TOTAL KAS KELUAR]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[$P{Saldo}]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement x="0" y="0" width="189" height="20" uuid="e61eb001-f732-4e19-9b22-1c5c3438a92f"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<reportElement x="10" y="-1" width="393" height="17" uuid="898fe335-b844-4510-b347-d62fa9d4626e"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[TOTAL KAS MASUK]]></text>
+					<text><![CDATA[SALDO AKHIR]]></text>
 				</staticText>
-				<textField>
-					<reportElement x="165" y="0" width="100" height="20" uuid="7fe457b1-6ccc-415b-a0df-ead26d3c1a16"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times New Roman"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{kas_masuk_nominal_1}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="442" y="0" width="100" height="20" uuid="660f7dd7-c9f7-4a20-9218-cd8131722432"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times New Roman"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{kas_keluar_nominal_1}]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -99,23 +85,27 @@ WHERE
 				<text><![CDATA[Jalan Sumatera No.19 Pekalongan]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="30" width="786" height="20" uuid="c6599065-27b3-4ff4-82d1-2066b0b1ab94"/>
+				<reportElement x="10" y="30" width="776" height="20" uuid="c6599065-27b3-4ff4-82d1-2066b0b1ab94"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[LAPORAN ARUS KAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="10" width="786" height="20" uuid="9c14e210-7c36-4936-82a6-dd74704bf6a3"/>
+				<reportElement x="10" y="10" width="776" height="20" uuid="9c14e210-7c36-4936-82a6-dd74704bf6a3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PT. KEJORA PELITA SEMESTA]]></text>
 			</staticText>
+			<image>
+				<reportElement x="223" y="10" width="67" height="58" uuid="1107f701-14bd-4b93-882e-1e0b5e40f683"/>
+				<imageExpression><![CDATA["E:\\Akuntansi-master\\Laporan\\logo.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="22" splitType="Stretch">
+		<band height="28" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="72" height="20" uuid="38ff4cef-fd6a-4565-89cf-5d394d6c7d22"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -128,14 +118,14 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{parTglAwal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy",new java.util.Locale("id")).format($P{parTglAwal})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy">
 				<reportElement x="193" y="0" width="171" height="20" uuid="3738c17d-76c2-4121-9b27-79ec047be0a9"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{parTglAkhir}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy",new java.util.Locale("id")).format($P{parTglAkhir})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="165" y="0" width="28" height="20" uuid="511b87e1-4730-4a4b-ab81-045ca97e98a2"/>
@@ -150,85 +140,42 @@ WHERE
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="21" splitType="Stretch">
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="29" height="20" backcolor="#F0F0F0" uuid="2f663da3-8686-43ae-9c59-2083436f67c9"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="4.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[NO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="289" y="1" width="271" height="20" uuid="270caecc-30e6-47d3-806a-d8eaca6b07c5"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ARUS KAS KELUAR]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="29" y="1" width="260" height="20" uuid="c112a9c1-ee60-4dc0-aa83-1028fa0527bc"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ARUS KAS MASUK]]></text>
-			</staticText>
+		<band height="45" splitType="Stretch">
+			<subreport>
+				<reportElement x="10" y="1" width="393" height="44" uuid="b11274ef-a19f-47a7-8bbd-cfec9b20396f"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="parTglAwal">
+					<subreportParameterExpression><![CDATA[$P{parTglAwal}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="parTglAkhir">
+					<subreportParameterExpression><![CDATA[$P{parTglAkhir}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "lapArus_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="403" y="1" width="362" height="44" uuid="517176b1-e633-4319-96dd-20fa975e7cd0"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="parTglAwal">
+					<subreportParameterExpression><![CDATA[$P{parTglAwal}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="parTglAkhir">
+					<subreportParameterExpression><![CDATA[$P{parTglAkhir}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "lapArus_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="0" width="786" height="1" uuid="c0cfe214-6673-4909-914c-97db3431f87f"/>
+			</line>
 		</band>
 	</columnHeader>
-	<detail>
-		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="29" height="20" uuid="c89b300a-5f6d-4cae-8218-55f918b86944"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="29" y="0" width="160" height="20" uuid="62e24ac4-d42a-4e0f-9e08-911bca003197"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kas_masuk_keterangan}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="289" y="0" width="153" height="20" uuid="02f519bf-2a4d-44dd-854a-573b4786540d"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kas_keluar_keterangan}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="442" y="0" width="118" height="20" uuid="d4a98bd6-a6fd-46a9-8a94-bc79d30ac556"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kas_keluar_nominal}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="165" y="0" width="100" height="20" uuid="6938cdd0-5f9a-44c0-a026-968721e0d3bc"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kas_masuk_nominal}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
 	<pageFooter>
-		<band height="20">
+		<band height="35">
 			<textField>
 				<reportElement x="686" y="0" width="100" height="20" uuid="5dbb7336-5be8-40d4-81b0-b06361eb006a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -240,20 +187,13 @@ WHERE
 	</pageFooter>
 	<summary>
 		<band height="116">
-			<staticText>
-				<reportElement x="597" y="0" width="189" height="29" uuid="8cc2b090-257a-44e3-bb94-dc5e60b871d9"/>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="522" y="0" width="264" height="20" uuid="7f9b45bc-07d3-4a20-ae76-f89adad19146"/>
+				<box rightPadding="2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<text><![CDATA[Pekalongan, ]]></text>
-			</staticText>
-			<textField pattern="dd MMMMM yyyy">
-				<reportElement x="645" y="0" width="141" height="29" uuid="7f9b45bc-07d3-4a20-ae76-f89adad19146"/>
-				<box rightPadding="2"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Pekalongan, "+new SimpleDateFormat("dd MMMM yyyy",new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="607" y="29" width="158" height="20" uuid="075aa395-9c41-4783-9f74-4bbb3599458b"/>
@@ -287,6 +227,9 @@ WHERE
 				</textElement>
 				<text><![CDATA[....................................................]]></text>
 			</staticText>
+			<line>
+				<reportElement x="-1" y="0" width="786" height="1" uuid="66eaf238-d765-484c-b0b4-a7339001deab"/>
+			</line>
 		</band>
 	</summary>
 </jasperReport>

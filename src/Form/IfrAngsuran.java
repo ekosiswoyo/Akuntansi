@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -18,11 +19,11 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
     ConfigDB getCnn = new ConfigDB();
     Connection _Cnn;
     
-    String sqlselect, sqlinsert, sqldelete, sqlkas, sqljurnal;
+    String sqlselect, sqlinsert, sqldelete, sqlkas, sqldebet, sqlkredit;
     String vid_angsuran, vid_piutang, vangsuran_ke, vjumlah, mid, vtgl, vketerangan, vidakun;
-    
+    SimpleDateFormat tglinput = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel tblangsuran;
-    
+    DecimalFormat uang_indo = new DecimalFormat("Rp #,##0.00");
     public IfrAngsuran() {
         initComponents();
         
@@ -32,7 +33,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         setTabelAng();
         showDataAng();
         listSum();
-        listAkun();
+       
     }
     
     private void clearForm(){
@@ -41,7 +42,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         txtJumlah.setText("");
         txtAngsuran.setText("");
         cmbPiutang.setSelectedIndex(0);
-        cmbIdAkun.setSelectedIndex(0);
+       
         txtKeterangan.setText("");
         dtTrans.setDate(new java.util.Date());
     }
@@ -52,10 +53,10 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         txtIdAngsuran.setEnabled(false);
         txtJumlah.setEnabled(false);
         txtAngsuran.setEnabled(false);
-        cmbIdAkun.setSelectedIndex(0);
+       
         cmbPiutang.setSelectedIndex(0);
         btnSimpan.setEnabled(false);
-        btnHapus.setEnabled(false);
+//        btnHapus.setEnabled(false);
     }
 
      private void enableForm(){
@@ -65,9 +66,9 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         txtJumlah.setEnabled(true);
         txtAngsuran.setEnabled(true);
         btnSimpan.setEnabled(true);
-        cmbIdAkun.setSelectedIndex(0);
+        
         cmbPiutang.setSelectedIndex(0);
-        btnHapus.setEnabled(true);
+     //   btnHapus.setEnabled(true);
     }
      
    
@@ -116,8 +117,8 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                 vid_angsuran = res.getString("id_angsuran");
                 vid_piutang = res.getString("id_piutang");
                 vangsuran_ke = res.getString("angsuran_ke");
-                vjumlah = res.getString("jumlah");
                 
+                vjumlah = uang_indo.format(res.getDouble("jumlah"));
                 Object[]data = {vid_angsuran, vid_piutang, vangsuran_ke, vjumlah};
                 tblangsuran.addRow(data);
             }Auto();
@@ -130,16 +131,19 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
     private void aksiSimpan(){
           vid_angsuran = txtIdAngsuran.getText();
           vid_piutang = KeySum[cmbPiutang.getSelectedIndex()];
-          vidakun = KeyAkun[cmbIdAkun.getSelectedIndex()];
+         
           vangsuran_ke = txtAngsuran.getText();
           vjumlah = txtJumlah.getText();
+          vtgl = tglinput.format(dtTrans.getDate());
            if(btnSimpan.getText().equals("Simpan")){
             sqlinsert = "insert into angsuran values "
-                        + " ('"+vid_angsuran+"','"+vid_piutang+"', '"+vangsuran_ke+"', '"+vjumlah+"') ";
+                        + " ('"+vid_angsuran+"','"+vid_piutang+"', '"+vangsuran_ke+"', '"+vjumlah+"', '"+vtgl+"') ";
             sqlkas = "insert into kas_masuk values "
-                    + " ('"+vid_angsuran+"','"+vtgl+"', '"+vidakun+"', '"+vketerangan+"', '"+vjumlah+"') ";
-            sqljurnal = "insert into jurnal_umum values "
-                    + " ('"+vid_angsuran+"','"+vidakun+"', '0', '"+vjumlah+"', '"+vtgl+"') "; 
+                    + " ('"+vid_angsuran+"','"+vtgl+"', '1-1011', '"+vketerangan+"', '"+vjumlah+"') ";
+             sqldebet = "insert into jurnal_umum values "
+                    + " ('"+vid_angsuran+"','1-1001','"+vjumlah+"', '0', '"+vtgl+"') "; 
+            sqlkredit = "insert into jurnal_umum values "
+                    + " ('"+vid_angsuran+"','1-1011', '0','"+vjumlah+"', '"+vtgl+"') "; 
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
            }else{
                sqlinsert = "update angsuran set id_piutang ='"+vid_piutang+"', angsuran_ke ='"+vangsuran_ke+"', jumlah = '"+vjumlah+"' where id_angsuran ='"+vid_angsuran+"' ";
@@ -152,15 +156,15 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
             state.executeUpdate(sqlkas);
-            state.executeUpdate(sqljurnal);
-            
+            state.executeUpdate(sqldebet);
+            state.executeUpdate(sqlkredit);
             clearForm(); disableForm(); showDataAng();Auto();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error Method aksiSimpan() : "+ex);
         } 
     }
     
-    private void aksiHapus(){
+   /* private void aksiHapus(){
         int jawab = JOptionPane.showConfirmDialog(this, 
                 "Apakah anda yakin akan menghapus data ini ? ID : "+vid_angsuran,
                 "Konfirmasi ",JOptionPane.YES_NO_OPTION);
@@ -179,7 +183,31 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         
     }
         
-    }   
+    }   */
+    private void cariAngsuran(){
+            try{
+                _Cnn = null;
+                _Cnn = getCnn.getConnection();
+                clearTabelAng();
+                sqlselect ="select * from angsuran "
+                    + " where id_piutang like '%"+txtCari.getText()+"%' order by id_angsuran asc ";     
+                Statement stat = _Cnn.createStatement();
+                ResultSet res = stat.executeQuery(sqlselect);
+                while(res.next()){
+                    
+                    vid_angsuran = res.getString("id_angsuran");
+                    vid_piutang =res.getString("id_piutang");
+                    vangsuran_ke = res.getString("angsuran_ke");
+                    vjumlah = res.getString("jumlah");
+                    Object[]data = { vid_angsuran, vid_piutang, vangsuran_ke, vjumlah};              
+                 tblangsuran.addRow(data);   
+                }
+                lblRecord.setText("Record : "+tbDataAngsuran.getRowCount());
+            }catch (SQLException ex){
+                JOptionPane.showMessageDialog(this, "Eror Method showDataPasien : " + ex);
+            }
+    }
+
     
      private void Auto(){
         //kode jenis
@@ -254,32 +282,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Eror Method GetDataUser : " + ex);
             }
     } 
-      String[] KeyAkun;
-    private void listAkun(){
-        try{
-            _Cnn = null;
-            _Cnn = getCnn.getConnection();
-            sqlselect = "SELECT * FROM perkiraan_akun order by id_akun asc";
-            Statement stat = _Cnn.createStatement();
-            ResultSet res = stat.executeQuery(sqlselect);
-            cmbIdAkun.removeAllItems();
-            cmbIdAkun.repaint();
-            cmbIdAkun.addItem("-- PILIH PERKIRAAN AKUN --");
-            int i = 1;
-            while(res.next()){
-                cmbIdAkun.addItem(res.getString("nm_perkiraan"));
-                i++;
-            }
-            res.first();
-            KeyAkun = new String[i+1];
-            for(Integer x =1;x < i;x++){
-                KeyAkun[x] = res.getString(1);
-                res.next();
-            }
-        } catch (SQLException ex){
-            JOptionPane.showMessageDialog(this, "Error Method listSum " +ex);
-        }
-    }
+      
     
     String[] KeySum;
     private void listSum(){
@@ -318,7 +321,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         txtAngsuran = new javax.swing.JTextField();
         txtIdAngsuran = new javax.swing.JTextField();
-        cmbPiutang = new javax.swing.JComboBox<>();
+        cmbPiutang = new javax.swing.JComboBox<String>();
         txtJumlah = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -329,15 +332,16 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         txtKeterangan = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        cmbIdAkun = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
-        btnHapus = new javax.swing.JButton();
+        txtCari = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDataAngsuran = new javax.swing.JTable();
         lblRecord = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Form Input"));
         setClosable(true);
@@ -349,12 +353,15 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
         setVisible(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setText("Entri Data Angsuran");
+        jLabel2.setText(" Data Angsuran");
+        jLabel2.setOpaque(true);
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, -1, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setOpaque(false);
 
         txtAngsuran.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtAngsuran.setOpaque(false);
@@ -372,7 +379,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
             }
         });
 
-        cmbPiutang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbPiutang.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         txtJumlah.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         txtJumlah.setOpaque(false);
@@ -401,10 +408,6 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
 
         jLabel7.setText("Keterangan");
 
-        cmbIdAkun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel8.setText("ID Akun");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -418,38 +421,35 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel7))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtAngsuran, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(cmbPiutang, 0, 371, Short.MAX_VALUE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(cmbIdAkun, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(txtIdAngsuran)))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(37, 37, 37)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtJumlah, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane2)))))
+                                .addComponent(jScrollPane2))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtIdAngsuran, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGap(38, 38, 38)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(dtTrans, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 2, Short.MAX_VALUE))
+                                            .addComponent(txtAngsuran)
+                                            .addComponent(cmbPiutang, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(txtJumlah))))
+                                .addGap(184, 184, 184))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(60, 60, 60)
-                        .addComponent(dtTrans, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(10, 10, 10))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbIdAkun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
-                .addGap(7, 7, 7)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtIdAngsuran, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -479,6 +479,8 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, -1, -1));
+
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
         jPanel2.setOpaque(false);
 
@@ -498,11 +500,29 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
             }
         });
 
-        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/btn_delete.png"))); // NOI18N
-        btnHapus.setText("Hapus");
-        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+        txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHapusActionPerformed(evt);
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCariKeyTyped(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel8.setText("Silahkan Mencari");
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -515,9 +535,13 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jButton1)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -525,9 +549,13 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 5, Short.MAX_VALUE))
+                    .addComponent(jLabel8)
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addGap(0, 13, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 340, 740, -1));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -547,41 +575,15 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tbDataAngsuran);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 737, 155));
+
         lblRecord.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRecord.setText("Record : 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 570, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addComponent(jLabel2)
-                .addGap(19, 19, 19))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblRecord)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 1, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(lblRecord))
-        );
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (1).jpg"))); // NOI18N
+        jLabel9.setText("jLabel9");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 770, 600));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -607,26 +609,15 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
-    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-      
-         if(txtIdAngsuran.getText().equals("")){
-            JOptionPane.showMessageDialog(this, "Belum ada data yang dipilih ! ",
-            "Informasi",JOptionPane.INFORMATION_MESSAGE );  
-         
-        }else{
-            aksiHapus();
-        }
-    }//GEN-LAST:event_btnHapusActionPerformed
-
     private void tbDataAngsuranMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataAngsuranMouseClicked
-          if(evt.getClickCount()==2){
+          /*if(evt.getClickCount()==2){
             vid_angsuran = tbDataAngsuran.getValueAt(tbDataAngsuran.getSelectedRow(), 0).toString();
                getData();
                
             
             btnSimpan.setText("Ubah");
             enableForm();
-        }
+        }*/
     }//GEN-LAST:event_tbDataAngsuranMouseClicked
 
     private void txtJumlahKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJumlahKeyTyped
@@ -643,14 +634,35 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtAngsuranKeyTyped
 
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
+    private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
+        
+    }//GEN-LAST:event_txtCariKeyTyped
+
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+        // TODO add your handling code here:
+        cariAngsuran();
+    }//GEN-LAST:event_txtCariKeyReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabelAng();
+        showDataAng();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnTambah;
-    private javax.swing.JComboBox<String> cmbIdAkun;
     private javax.swing.JComboBox<String> cmbPiutang;
     private com.toedter.calendar.JDateChooser dtTrans;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -659,6 +671,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -666,6 +679,7 @@ public class IfrAngsuran extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRecord;
     private javax.swing.JTable tbDataAngsuran;
     private javax.swing.JTextField txtAngsuran;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtIdAngsuran;
     private javax.swing.JTextField txtJumlah;
     private javax.swing.JTextArea txtKeterangan;

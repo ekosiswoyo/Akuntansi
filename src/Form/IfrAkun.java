@@ -1,5 +1,4 @@
 package Form;
-
 import Tool.ConfigDB;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -14,12 +13,13 @@ ConfigDB getCnn = new ConfigDB();
     
     String sqlselect, sqlinsert, sqldelete;
     String vkd_perkiraan, vgolongan, vtipe, vnama, mid;
+    String visi_awal;
     
-    DefaultTableModel tblBarang;
+    DefaultTableModel tblAkun;
     
     public IfrAkun() {
         initComponents();
-        Id();
+//        Id();
         clearForm();
         disableForm();
         enableForm();
@@ -52,8 +52,8 @@ ConfigDB getCnn = new ConfigDB();
     }
       
        private void setTabelAkun(){
-        String[]kolom1 = {"Kode Perkiraan", "Golongna", "Tipe Perkiraan", "Nama Perkiraan"};
-        tblBarang= new DefaultTableModel(null,kolom1){
+        String[]kolom1 = {"Kode Perkiraan", "Golongan", "Tipe Perkiraan", "Nama Perkiraan"};
+        tblAkun= new DefaultTableModel(null,kolom1){
             Class[] types = new Class[]{
                 java.lang.String.class,
                 java.lang.String.class,
@@ -70,7 +70,7 @@ ConfigDB getCnn = new ConfigDB();
                 return (col < cola) ? false : true;
             }
         };
-        tblDataAkun.setModel(tblBarang);
+        tblDataAkun.setModel(tblAkun);
         tblDataAkun.getColumnModel().getColumn(0).setPreferredWidth(75);
         tblDataAkun.getColumnModel().getColumn(1).setPreferredWidth(75);
         tblDataAkun.getColumnModel().getColumn(2).setPreferredWidth(75);
@@ -78,9 +78,9 @@ ConfigDB getCnn = new ConfigDB();
        
     }
     private void clearTabelAkun(){
-        int row = tblBarang.getRowCount();
+        int row = tblAkun.getRowCount();
         for (int i = 0;i < row;i++){
-             tblBarang.removeRow(0);
+             tblAkun.removeRow(0);
         }
     }
     
@@ -88,7 +88,7 @@ ConfigDB getCnn = new ConfigDB();
          try{
             _Cnn = null;
             _Cnn = getCnn.getConnection();
-            clearTabelAkun();
+          clearTabelAkun();
             sqlselect =  "select * from perkiraan_akun order by id_akun";
             Statement stat = _Cnn.createStatement();
             ResultSet res = stat.executeQuery(sqlselect);
@@ -99,9 +99,10 @@ ConfigDB getCnn = new ConfigDB();
                 vnama = res.getString("nm_perkiraan");
                 
                 Object[]data = {vkd_perkiraan, vgolongan, vtipe, vnama };
-                tblBarang.addRow(data); 
+              tblAkun.addRow(data); 
                 btnTambah.setText("Tambah");
-            }Id();
+            }
+            //Id();
             lblRecord.setText("Record : "+tblDataAkun.getRowCount());
         }catch (SQLException ex){
                 JOptionPane.showMessageDialog(this, "Error Method showdataSiswa : " + ex);
@@ -125,7 +126,7 @@ ConfigDB getCnn = new ConfigDB();
            }else{
                sqlinsert = "update perkiraan_akun set golongan ='"+vgolongan+"', tipe_perkiraan='"+vtipe+"', "
                        + " nm_perkiraan='"+vnama+"' where id_akun = '"+vkd_perkiraan+"'";
-               InputSiswa.dispose();
+               InputAkun.dispose();
                
                 JOptionPane.showMessageDialog(null,"Data Berhasil DiUbah",
                         "Informasi", JOptionPane.INFORMATION_MESSAGE);
@@ -136,7 +137,8 @@ ConfigDB getCnn = new ConfigDB();
             Statement state = _Cnn.createStatement();
             state.executeUpdate(sqlinsert);
             JOptionPane.showMessageDialog(this, "Data Berhasil disimpan");
-            clearForm(); enableForm(); showDataAkun();Id();
+            clearForm(); enableForm(); showDataAkun();
+            //Id();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error Method aksiSimpan() : "+ex);
         } 
@@ -155,39 +157,30 @@ ConfigDB getCnn = new ConfigDB();
             java.sql.Statement state = _Cnn.createStatement();
             state.executeUpdate(sqldelete);
            JOptionPane.showMessageDialog(null,"Data Berhasil Dihapus");
-           clearForm();disableForm();showDataAkun();Id();
+           clearForm();disableForm();showDataAkun();
+           //Id();
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error method aksiHapus : " + ex);
         }
         
     }   
     }
-     private void Id(){
+  /*  private void Id(){
         //kode jenis
         if(btnSimpan2.getText().equals("Simpan")){
             try{
                 _Cnn = getCnn.getConnection();
-                String id = "select max(right(id_akun,3)) as id_akun from perkiraan_akun";
+                String id = "select max(id_akun) as id_akun from perkiraan_akun";
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(id);
                while(res.next()){
                     if(res.first() == false){
-                        mid = "AKUN-" + "001";
+                        mid = " ";
                     } else{
                         res.last();
                         int noID = res.getInt(1) + 1;
                         String no = String.valueOf(noID);
-//                        int noLong = no.length();
-//                        for(int a=0;a<2-noLong;a++){
-//                            no = "TRANS-PNJ-" + no;
-//                        }
-                        if(noID < 10){
-                            mid =  "AKUN-" + "00" + no;
-                        } else if(noID < 100){
-                            mid = "AKUN-" + "0" + no;
-                        } else{
-                            mid= "AKUN-" + no;
-                        }
+                mid= no;
                         txtKdPerkiraan.setText(mid);
                         }
                    
@@ -197,8 +190,8 @@ ConfigDB getCnn = new ConfigDB();
             }
         }
         //kode jenis
-    }
-     
+    }*/
+   
     private void getData() {
              try{
                 _Cnn = null;
@@ -209,6 +202,7 @@ ConfigDB getCnn = new ConfigDB();
                 Statement stat = _Cnn.createStatement();
                 ResultSet res = stat.executeQuery(sqlselect);
                 if(res.first()){
+                     visi_awal = res.getString("nm_perkiraan");
                     txtKdPerkiraan.setText(res.getString("id_akun"));
                     cmbGolongan.setSelectedItem(res.getString("golongan"));
                     cmbTipe.setSelectedItem(res.getString("tipe_perkiraan"));
@@ -223,7 +217,7 @@ ConfigDB getCnn = new ConfigDB();
     }
     
     
-    private void cariSiswa(){
+    private void cariAkun(){
             try{
                 _Cnn = null;
                 _Cnn = getCnn.getConnection();
@@ -239,44 +233,19 @@ ConfigDB getCnn = new ConfigDB();
                     vtipe = res.getString("tipe_perkiraan");
                     vnama = res.getString("nm_perkiraan");
                     Object[]data = { vkd_perkiraan, vgolongan, vtipe, vnama};              
-                    tblBarang.addRow(data);   
+                    tblAkun.addRow(data);   
                 }
                 lblRecord.setText("Record : "+tblDataAkun.getRowCount());
             }catch (SQLException ex){
                 JOptionPane.showMessageDialog(this, "Eror Method showDataPasien : " + ex);
             }
     }
-    String[] KeyKelas;
-//    private void listKelas(){
-//        try{
-//            _Cnn = null;
-//            _Cnn = getCnn.getConnection();
-//            sqlselect = "SELECT * FROM dt_barang order by id_barang asc";
-//            Statement stat = _Cnn.createStatement();
-//            ResultSet res = stat.executeQuery(sqlselect);
-//            cmbKelas.removeAllItems();
-//            cmbKelas.repaint();
-//            cmbKelas.addItem("-- PILIH KELAS --");
-//            int i = 1;
-//            while(res.next()){
-//                cmbKelas.addItem(res.getString("nama_kelas"));
-//                i++;
-//            }
-//            res.first();
-//            KeyKelas = new String[i+1];
-//            for(Integer x =1;x < i;x++){
-//                KeyKelas[x] = res.getString(1);
-//                res.next();
-//            }
-//        } catch (SQLException ex){
-//            JOptionPane.showMessageDialog(this, "Error Method listKategori " +ex);
-//        }
-//    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        InputSiswa = new javax.swing.JFrame();
+        InputAkun = new javax.swing.JFrame();
         jPanel4 = new javax.swing.JPanel();
         txtNmPerkiraan = new javax.swing.JTextField();
         txtKdPerkiraan = new javax.swing.JTextField();
@@ -284,20 +253,27 @@ ConfigDB getCnn = new ConfigDB();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        cmbGolongan = new javax.swing.JComboBox<>();
-        cmbTipe = new javax.swing.JComboBox<>();
+        cmbGolongan = new javax.swing.JComboBox<String>();
+        cmbTipe = new javax.swing.JComboBox<String>();
         btnSimpan2 = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lblRecord = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         txtCari = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         tblDataAkun = new javax.swing.JTable();
         jScrollBar1 = new javax.swing.JScrollBar();
         btnTambah = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
 
+        InputAkun.setBackground(new java.awt.Color(51, 102, 255));
+        InputAkun.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Silahkan Input Data Perkiraan"));
 
         txtNmPerkiraan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -328,9 +304,9 @@ ConfigDB getCnn = new ConfigDB();
         jLabel6.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel6.setText("Nama Perkiraan");
 
-        cmbGolongan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- PILIH GOLONGAN --", "Harta", "Hutang", "Aktiva" }));
+        cmbGolongan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- PILIH GOLONGAN --", "Harta", "Hutang", "Modal", "Pendapatan", "HPP", "Biaya", "Pendapatan lain-lain", "Biaya Lain-lain" }));
 
-        cmbTipe.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- PILIH TIPE --", "Header", "Detail" }));
+        cmbTipe.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- PILIH TIPE --", "Header", "Detail" }));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -344,18 +320,19 @@ ConfigDB getCnn = new ConfigDB();
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
                             .addComponent(jLabel3))
-                        .addGap(10, 10, 10)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbTipe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtKdPerkiraan, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                                    .addComponent(cmbGolongan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(cmbTipe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbGolongan, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtKdPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
-                        .addComponent(txtNmPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNmPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 92, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -377,8 +354,10 @@ ConfigDB getCnn = new ConfigDB();
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txtNmPerkiraan, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
+
+        InputAkun.getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, -1, -1));
 
         btnSimpan2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save-black.png"))); // NOI18N
         btnSimpan2.setText("Simpan");
@@ -387,39 +366,26 @@ ConfigDB getCnn = new ConfigDB();
                 btnSimpan2ActionPerformed(evt);
             }
         });
+        InputAkun.getContentPane().add(btnSimpan2, new org.netbeans.lib.awtextra.AbsoluteConstraints(349, 223, 99, 30));
 
-        javax.swing.GroupLayout InputSiswaLayout = new javax.swing.GroupLayout(InputSiswa.getContentPane());
-        InputSiswa.getContentPane().setLayout(InputSiswaLayout);
-        InputSiswaLayout.setHorizontalGroup(
-            InputSiswaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(InputSiswaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InputSiswaLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSimpan2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        InputSiswaLayout.setVerticalGroup(
-            InputSiswaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(InputSiswaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(btnSimpan2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akun.jpg"))); // NOI18N
+        jLabel8.setText("jLabel8");
+        InputAkun.getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(-6, -6, 460, 290));
 
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setText("DATA PERKIRAAN");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 227, -1));
 
         lblRecord.setText("Record 0");
+        getContentPane().add(lblRecord, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 440, -1, -1));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Navigasi"));
+        jPanel1.setOpaque(false);
 
         txtCari.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtCari.addActionListener(new java.awt.event.ActionListener() {
@@ -433,27 +399,44 @@ ConfigDB getCnn = new ConfigDB();
             }
         });
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel1.setText("Silahkan Mencari");
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(518, Short.MAX_VALUE)
+                .addContainerGap(351, Short.MAX_VALUE)
                 .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton1)
+                .addGap(34, 34, 34))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCari, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
-                .addGap(6, 6, 6))
+                    .addComponent(jLabel1)
+                    .addComponent(jButton1))
+                .addGap(6, 10, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(txtCari)
+                .addContainerGap())
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, -1, -1));
 
         jScrollPane8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -466,6 +449,7 @@ ConfigDB getCnn = new ConfigDB();
                 "Kode Perkiraan", "Golongan", "Tipe Perkiraan", "Nama Perkiraan"
             }
         ));
+        tblDataAkun.setOpaque(false);
         tblDataAkun.setRowHeight(25);
         tblDataAkun.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -474,6 +458,9 @@ ConfigDB getCnn = new ConfigDB();
         });
         jScrollPane8.setViewportView(tblDataAkun);
 
+        getContentPane().add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 137, 848, 297));
+        getContentPane().add(jScrollBar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 62, -1, 407));
+
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/insert.png"))); // NOI18N
         btnTambah.setText("Tambah");
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
@@ -481,6 +468,7 @@ ConfigDB getCnn = new ConfigDB();
                 btnTambahActionPerformed(evt);
             }
         });
+        getContentPane().add(btnTambah, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 445, 109, 30));
 
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/btn_delete.png"))); // NOI18N
         btnHapus.setText("Hapus");
@@ -489,53 +477,11 @@ ConfigDB getCnn = new ConfigDB();
                 btnHapusActionPerformed(evt);
             }
         });
+        getContentPane().add(btnHapus, new org.netbeans.lib.awtextra.AbsoluteConstraints(765, 445, 93, 30));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(lblRecord)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 848, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
-                .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblRecord)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
-        );
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/akuntansi (1).jpg"))); // NOI18N
+        jLabel7.setText("jLabel7");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 510));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -543,18 +489,18 @@ ConfigDB getCnn = new ConfigDB();
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         
         if(btnTambah.getText().equals("Tambah")){
-        InputSiswa.setVisible(true);
-        InputSiswa.setSize(500, 450);
-        InputSiswa.setLocationRelativeTo(this);
+        InputAkun.setVisible(true);
+        InputAkun.setSize(500, 450);
+        InputAkun.setLocationRelativeTo(this);
         enableForm();
-        Id();
+//        Id();
         txtKdPerkiraan.requestFocus(true);
         btnSimpan2.setText("Simpan");
         }else{
             btnSimpan2.setText("Ubah Data");
-            InputSiswa.setVisible(true);
-        InputSiswa.setSize(500, 450);
-        InputSiswa.setLocationRelativeTo(this);
+            InputAkun.setVisible(true);
+        InputAkun.setSize(500, 450);
+        InputAkun.setLocationRelativeTo(this);
         enableForm();
         
         txtKdPerkiraan.requestFocus(true);
@@ -569,8 +515,26 @@ ConfigDB getCnn = new ConfigDB();
             JOptionPane.showMessageDialog(this, "Nama Perkiraan harus diisi",  
             "Informasi", JOptionPane.INFORMATION_MESSAGE);
         }else{
-            aksiSimpan();
-        }
+              try {
+                String sqlCari = "";
+                if(btnSimpan2.getText().equals("Simpan")){
+                    sqlCari = "select * from perkiraan_akun where nm_perkiraan='"+txtNmPerkiraan.getText()+"'";
+                }else{
+                    sqlCari = "select * from perkiraan_akun where nm_perkiraan='"+txtNmPerkiraan.getText()+"' "
+                            + "and nm_perkiraan not in ('"+visi_awal+"')";
+                }
+                Statement s = (Statement)getCnn.getConnection().createStatement();
+                ResultSet r = s.executeQuery(sqlCari);
+                if(r.next()){
+                    JOptionPane.showMessageDialog(this, "perkiraan akun tersebut sudah ada ! ",
+                        "Informasi", JOptionPane.INFORMATION_MESSAGE);  
+                }else{
+                    aksiSimpan();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }                             
     }//GEN-LAST:event_btnSimpan2ActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -595,7 +559,7 @@ ConfigDB getCnn = new ConfigDB();
     }//GEN-LAST:event_tblDataAkunMouseClicked
 
     private void txtCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyTyped
-        cariSiswa();
+        cariAkun();
     }//GEN-LAST:event_txtCariKeyTyped
 
     private void txtNmPerkiraanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNmPerkiraanKeyTyped
@@ -612,20 +576,32 @@ ConfigDB getCnn = new ConfigDB();
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        clearForm();
+        disableForm();
+
+        setTabelAkun();
+        showDataAkun();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JFrame InputSiswa;
+    private javax.swing.JFrame InputAkun;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSimpan2;
     private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cmbGolongan;
     private javax.swing.JComboBox<String> cmbTipe;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollBar jScrollBar1;
